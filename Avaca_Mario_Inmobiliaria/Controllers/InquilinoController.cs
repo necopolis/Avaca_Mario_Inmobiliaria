@@ -78,6 +78,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         }
         public ActionResult Delete(int id)
         {
+            /* Volver a verlo */
             int res = data.Baja(id);
             if (res > 0)
             {
@@ -96,6 +97,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         {
             try
             {
+                /* aca las elimino y listo*/
                 return RedirectToAction(nameof(Index));
             }
             catch
