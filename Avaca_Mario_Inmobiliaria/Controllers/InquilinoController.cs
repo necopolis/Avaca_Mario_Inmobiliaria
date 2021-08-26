@@ -5,17 +5,19 @@ using Avaca_Mario_Inmobiliaria.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace Avaca_Mario_Inmobiliaria.Controllers
 {
     public class InquilinoController : Controller
     {
-
+        protected readonly IConfiguration configuration;
         InquilinoData data;
 
-        public InquilinoController()
+        public InquilinoController(IConfiguration configuration)
         {
-            data = new InquilinoData();
+            this.configuration = configuration;
+            data = new InquilinoData(configuration);
         }
 
         // GET: InquilinoController

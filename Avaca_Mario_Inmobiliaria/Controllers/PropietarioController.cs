@@ -1,6 +1,7 @@
 ﻿using Avaca_Mario_Inmobiliaria.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,12 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
 {
     public class PropietarioController : Controller
     {
+        protected readonly IConfiguration configuration;
         PropietarioData data;
-        public PropietarioController()
+        public PropietarioController(IConfiguration  configuration)
         {
-            data = new PropietarioData();
+            this.configuration = configuration;
+            data = new PropietarioData(configuration);
         }
 
         // GET: PropietarioController
