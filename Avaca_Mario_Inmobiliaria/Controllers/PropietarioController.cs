@@ -49,8 +49,10 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 data.Alta(propietario);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
+                ViewBag.StackTrate = ex.StackTrace;
                 return View();
             }
         }
@@ -72,8 +74,10 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 data.Modificar(id, propietario);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
+                ViewBag.StackTrate = ex.StackTrace;
                 return View();
             }
         }
@@ -95,8 +99,10 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 data.Baja(id);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
+                ViewBag.StackTrate = ex.StackTrace;
                 return View();
             }
         }
