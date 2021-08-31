@@ -13,10 +13,16 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
     {
         protected readonly IConfiguration configuration;
         ContratoData dataContrato;
+        InmuebleData dataInmueble;
+        GaranteData dataGarante;
+        InquilinoData dataInquilino;
         public ContratoController(IConfiguration configuration)
         {
             this.configuration = configuration;
             dataContrato = new ContratoData(configuration);
+            dataInmueble = new InmuebleData(configuration);
+            dataGarante = new GaranteData(configuration);
+            dataInquilino = new InquilinoData(configuration);
         }
         // GET: ContratoController
         public ActionResult Index()
@@ -34,7 +40,9 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: ContratoController/Create
         public ActionResult Create()
         {
-            
+            ViewBag.Inmuebles =dataInmueble.ObtenerTodos();
+            ViewBag.Garantes = dataGarante.ObtenerTodos();
+            ViewBag.Inquilinos = dataInquilino.ObtenerTodos();
             return View();
         }
 

@@ -1,0 +1,68 @@
+﻿@model Avaca_Mario_Inmobiliaria.Models.Contrato
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Creacion de</h1>
+
+<h4>Contrato</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FechaInicio" class="control-label"></label>
+                <input asp-for="FechaInicio" class="form-control" />
+                <span asp-validation-for="FechaInicio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaFin" class="control-label"></label>
+                <input asp-for="FechaFin" class="form-control" />
+                <span asp-validation-for="FechaFin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="InquilinoId" class="control-label"></label>
+                <select class="form-control" name="InquilinoId">
+                    @foreach (var i in (IList<Inquilino>)ViewBag.Inquilinos)
+                    {
+                        <option value="@i.Id"> @("DNI: "+i.DNI + " Apellido: " + i.Apellido)</option>
+                    }
+                </select>
+                <span asp-validation-for="InquilinoId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GaranteId" class="control-label"></label>
+                <select class="form-control" name="GaranteId">
+                    @foreach (var i in (IList<Garante>)ViewBag.Garantes)
+                    {
+                        <option value="@i.Id"> @("DNI: "+i.DNI + " Apellido: " + i.Apellido)</option>
+                    }
+                </select>
+                <span asp-validation-for="GaranteId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="InmuebleId" class="control-label"></label>
+                <select class="form-control" name="PropietarioId">
+                    @foreach (var i in (IList<Inmueble>)ViewBag.Inmuebles)
+                    {
+                        <option value="@i.Id"> @("Direccion: "+i.Direccion + " Uso: " + i.Uso+" Precio:"+i.Precio)</option>
+                    }
+                </select>
+                <span asp-validation-for="InmuebleId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Crear" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Regresar a la Lista</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

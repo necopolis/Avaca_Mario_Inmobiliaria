@@ -13,11 +13,11 @@ namespace Avaca_Mario_Inmobiliaria.Models
         public int Id { get; set; }
         [Required]
         public string Direccion { get; set; }
-        [Display(Prompt = "Comercial o Residencial")]
+        [Display(Prompt = "Comercial o Residencial"), RegularExpression(@"^[a-zA-Z\s]{2,254}", ErrorMessage = "Solo letras o espacios")]
         public string Uso { get; set; }
         [Display(Prompt = "departamentos, locales, depósitos, oficinas individuales, etc.")]
         public string Tipo { get; set; }
-        [Display(Name = "Cantidad de Ambientes"), Required]
+        [Display(Name = "Ambientes"), Required(ErrorMessage = "Este campo es Obligatorio.")]
         public int CantAmbiente { get; set; }
         public decimal Precio { get; set; }
         public bool Activo { get; set; }

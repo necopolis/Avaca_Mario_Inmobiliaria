@@ -44,12 +44,13 @@ namespace Avaca_Mario_Inmobiliaria.Models
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT c.Id, c.FechaInicio, c.FechaFin, m.Precio,
-                    p.Apellido, i.Nombre, i.Apellido, g.Apellido, m.Id ,m.Direccion
-                    FROM Contrato c INNER JOIN Inquilino i ON c.InquilinoId = c.Id
-                    INNER JOIN Inmueble m ON c.InmuebleId = m.Id
-                    INNER JOIN Propietario p ON m.PropietarioId = p.Id
-                    INNER JOIN Garante g ON c.GaranteId = g.Id";
+                string sql = @"SELECT c.Id, c.FechaInicio, c.FechaFin, c.InmuebleId, c.InquilinoId, c.GaranteId,
+                                i.Id, i.DNI, i.Apellido,
+                                g.Id, g.DNI, g.Apellido,
+                                m.Id ,m.Direccion, m.Precio, m.Uso
+                                FROM Contrato c INNER JOIN Inquilino i ON c.InquilinoId = i.Id
+                                INNER JOIN Inmueble m ON c.InmuebleId = m.Id
+                                INNER JOIN Garante g ON c.GaranteId = g.Id;";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     conn.Open();
@@ -67,16 +68,15 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             Inquilino = new Inquilino
                             {
                                 Id = (int)reader[nameof(Inquilino.Id)],
-                                Nombre = (string)reader[nameof(Inquilino.Nombre)],
+                                DNI = (string)reader[nameof(Inquilino.DNI)],
                                 Apellido = (string)reader[nameof(Inquilino.Apellido)],
                             },
                             Inmueble = new Inmueble
                             {
                                 Id = (int)reader[nameof(Inmueble.Id)],
                                 Direccion = (string)reader[nameof(Inmueble.Direccion)],
-                                    Duenio = new Propietario {
-                                        Nombre = (string)reader[nameof(Propietario.Nombre)],
-                                    }
+                                Precio=(decimal)reader[nameof(Inmueble.Precio)],
+                                Uso=(string)reader[nameof(Inmueble.Uso)]
                             },
                             
                             Garante= new Garante

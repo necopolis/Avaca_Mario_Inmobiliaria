@@ -21,8 +21,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
             int res = -1;
             using (SqlConnection conn= new SqlConnection(connectionString))
             {
-                string sql = @"INSERT INTO Inquilino (DNI, Nombre, Apellido, Telefono, Email)
-                                VALUES (@DNI, @Nombre, @Apellido, @Telefono, @Email);
+                string sql = @"INSERT INTO Inquilino (DNI, Nombre, Apellido, Telefono, Email, Activo)
+                                VALUES (@DNI, @Nombre, @Apellido, @Telefono, @Email, @Activo);
                                 SELECT SCOPE_IDENTITY();";
 
                 using (SqlCommand comm  = new SqlCommand(sql, conn))
@@ -32,6 +32,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Apellido", inquilino.Apellido);
                     comm.Parameters.AddWithValue("@Telefono", inquilino.Telefono);
                     comm.Parameters.AddWithValue("@Email", inquilino.Email);
+                    comm.Parameters.AddWithValue("@Activo", inquilino.Activo);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteScalar());
                     conn.Close();
@@ -48,7 +49,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             {
                 string sql = @"UPDATE Inquilino 
                                SET 
-                                DNI = @DNI, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email
+                                DNI = @DNI, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email, Activo=@Activo
                               WHERE
                                  Id = @Id";
 
@@ -59,6 +60,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Apellido", inquilino.Apellido);
                     comm.Parameters.AddWithValue("@Telefono", inquilino.Telefono);
                     comm.Parameters.AddWithValue("@Email", inquilino.Email);
+                    comm.Parameters.AddWithValue("@Activo", inquilino.Activo);
                     comm.Parameters.AddWithValue("@Id", id);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteNonQuery());
@@ -73,7 +75,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             Inquilino i = null;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email FROM Inquilino 
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, Activo FROM Inquilino 
                                 WHERE Id=@id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -89,7 +91,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             Nombre = (string)reader[nameof(Inquilino.Nombre)],
                             Apellido = (string)reader[nameof(Inquilino.Apellido)],
                             Telefono = (string)reader[nameof(Inquilino.Telefono)],
-                            Email = (string)reader[nameof(Inquilino.Email)]
+                            Email = (string)reader[nameof(Inquilino.Email)],
+                            Activo = (bool)reader[nameof(Inquilino.Activo)]
                         };
                     }
                     conn.Close();
@@ -121,7 +124,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             IList<Inquilino> res =new List<Inquilino>();
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, Activo
                               FROM Inquilino";
 
                 using (SqlCommand comm = new SqlCommand(sql, conn))
@@ -137,7 +140,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             Nombre = (string)reader[nameof(Inquilino.Nombre)],
                             Apellido = (string)reader[nameof(Inquilino.Apellido)],
                             Telefono = (string)reader[nameof(Inquilino.Telefono)],
-                            Email = (string)reader[nameof(Inquilino.Email)]
+                            Email = (string)reader[nameof(Inquilino.Email)],
+                            Activo = (bool)reader[nameof(Inquilino.Activo)]
                         };
                         res.Add(i);
                     }

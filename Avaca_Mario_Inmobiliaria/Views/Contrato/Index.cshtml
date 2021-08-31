@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Avaca_Mario_Inmobiliaria.Models.Contrato>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Lista de Contratos</h1>
+
+<p>
+    <a asp-action="Create">Crear Nuevo Contrato</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaInicio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaFin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InquilinoId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GaranteId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InmuebleId)
+            </th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaInicio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaFin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Inquilino.DNI + " " + item.Inquilino.Apellido)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Garante.DNI +" "+ item.Garante.Apellido)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Inmueble.Direccion +" "+item.Inmueble.Uso +" "+item.Inmueble.Precio)
+            </td>
+            <td>
+                @Html.ActionLink("Editar", "Edit", new { id=item.Id }) |
+                @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
+                @Html.ActionLink("Eliminar", "Delete", new { id = item.Id })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

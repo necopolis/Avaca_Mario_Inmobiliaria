@@ -22,7 +22,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string sql = @"INSERT INTO Propietario (DNI, Nombre, Apellido, Telefono, Email)
-                                VALUES (@DNI, @Nombre, @Apellido, @Telefono, @Email);
+                                VALUES (@DNI, @Nombre, @Apellido, @Telefono, @Email, @Activo);
                                 SELECT SCOPE_IDENTITY();";
 
                 using (SqlCommand comm = new SqlCommand(sql, conn))
@@ -32,6 +32,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Apellido", propietario.Apellido);
                     comm.Parameters.AddWithValue("@Telefono", propietario.Telefono);
                     comm.Parameters.AddWithValue("@Email", propietario.Email);
+                    comm.Parameters.AddWithValue("@Activo", propietario.Activo);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteScalar());
                     conn.Close();
@@ -48,7 +49,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             {
                 string sql = @"UPDATE Propietario 
                                SET 
-                                DNI = @DNI, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email
+                                DNI = @DNI, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email, Activo=@Activo
                               WHERE
                                  Id = @Id";
 
@@ -59,6 +60,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Apellido", propietario.Apellido);
                     comm.Parameters.AddWithValue("@Telefono", propietario.Telefono);
                     comm.Parameters.AddWithValue("@Email", propietario.Email);
+                    comm.Parameters.AddWithValue("@Activo", propietario.Activo);
                     comm.Parameters.AddWithValue("@Id", id);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteNonQuery());
@@ -73,7 +75,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             Propietario i = null;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email FROM Propietario 
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, Activo FROM Propietario 
                                 WHERE Id=@id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -89,7 +91,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             Nombre = (string)reader[nameof(Propietario.Nombre)],
                             Apellido = (string)reader[nameof(Propietario.Apellido)],
                             Telefono = (string)reader[nameof(Propietario.Telefono)],
-                            Email = (string)reader[nameof(Propietario.Email)]
+                            Email = (string)reader[nameof(Propietario.Email)],
+                            Activo = (bool)reader[nameof(Propietario.Activo)]
                         };
                     }
                     conn.Close();
@@ -121,7 +124,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             IList<Propietario> res = new List<Propietario>();
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, Activo
                               FROM Propietario";
 
                 using (SqlCommand comm = new SqlCommand(sql, conn))
@@ -137,7 +140,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             Nombre = (string)reader[nameof(Propietario.Nombre)],
                             Apellido = (string)reader[nameof(Propietario.Apellido)],
                             Telefono = (string)reader[nameof(Propietario.Telefono)],
-                            Email = (string)reader[nameof(Propietario.Email)]
+                            Email = (string)reader[nameof(Propietario.Email)],
+                            Activo = (bool)reader[nameof(Propietario.Activo)]
                         };
                         res.Add(i);
                     }
