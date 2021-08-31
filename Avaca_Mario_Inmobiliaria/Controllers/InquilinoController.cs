@@ -5,17 +5,19 @@ using Avaca_Mario_Inmobiliaria.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace Avaca_Mario_Inmobiliaria.Controllers
 {
     public class InquilinoController : Controller
     {
-
+        protected readonly IConfiguration configuration;
         InquilinoData data;
 
-        public InquilinoController()
+        public InquilinoController(IConfiguration configuration)
         {
-            data = new InquilinoData();
+            this.configuration = configuration;
+            data = new InquilinoData(configuration);
         }
 
         // GET: InquilinoController
@@ -48,8 +50,10 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 data.Alta(i);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
+                //ViewBag.StackTrate = ex.StackTrace;
                 return View();
             }
         }
@@ -71,8 +75,10 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 data.Modificar(id, inquilino);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
+                //ViewBag.StackTrate = ex.StackTrace;
                 return View();
             }
         }
@@ -100,8 +106,10 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 /* aca las elimino y listo*/
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
+                //ViewBag.StackTrate = ex.StackTrace;
                 return View();
             }
         }

@@ -1,6 +1,7 @@
 ﻿using Avaca_Mario_Inmobiliaria.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,12 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
 {
     public class PropietarioController : Controller
     {
+        protected readonly IConfiguration configuration;
         PropietarioData data;
-        public PropietarioController()
+        public PropietarioController(IConfiguration  configuration)
         {
-            data = new PropietarioData();
+            this.configuration = configuration;
+            data = new PropietarioData(configuration);
         }
 
         // GET: PropietarioController
@@ -46,8 +49,10 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 data.Alta(propietario);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
+                ViewBag.StackTrate = ex.StackTrace;
                 return View();
             }
         }
@@ -69,8 +74,10 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 data.Modificar(id, propietario);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
+                ViewBag.StackTrate = ex.StackTrace;
                 return View();
             }
         }
@@ -92,8 +99,10 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 data.Baja(id);
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
+                ViewBag.StackTrate = ex.StackTrace;
                 return View();
             }
         }
