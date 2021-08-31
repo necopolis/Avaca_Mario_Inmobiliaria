@@ -44,7 +44,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT c.FechaInicio, c.FechaFin, m.Precio,
+                string sql = @"SELECT c.Id, c.FechaInicio, c.FechaFin, m.Precio,
                     p.Apellido, i.Nombre, i.Apellido, g.Apellido, m.Id ,m.Direccion
                     FROM Contrato c INNER JOIN Inquilino i ON c.InquilinoId = c.Id
                     INNER JOIN Inmueble m ON c.InmuebleId = m.Id
@@ -58,22 +58,32 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     {
                         Contrato contrato = new Contrato
                         {
-                            Id = reader.GetInt32(0),
-                            FechaInicio = reader.GetDateTime(1),
-                            FechaFin = reader.GetDateTime(2),
+                            Id = (int)reader[nameof(Contrato.Id)],
+                            FechaInicio = (DateTime)reader[nameof(Contrato.FechaInicio)],
+                            FechaFin = (DateTime)reader[nameof(Contrato.FechaFin)],
+                            InmuebleId = (int)reader[nameof(Contrato.InmuebleId)],
+                            GaranteId = (int)reader[nameof(Contrato.GaranteId)],
+                            InquilinoId = (int)reader[nameof(Contrato.InquilinoId)],
                             Inquilino = new Inquilino
                             {
-                                Id = reader.GetInt32(7),
-                                Nombre = reader.GetString(8),
-                                Apellido = reader.GetString(9),
+                                Id = (int)reader[nameof(Inquilino.Id)],
+                                Nombre = (string)reader[nameof(Inquilino.Nombre)],
+                                Apellido = (string)reader[nameof(Inquilino.Apellido)],
                             },
                             Inmueble = new Inmueble
                             {
-                                Id = reader.GetInt32(7),
-                                Direccion = reader.GetString(2),
-                                Duenio = new Propietario {
-                                Nombre = reader.GetString(7),
-                                }
+                                Id = (int)reader[nameof(Inmueble.Id)],
+                                Direccion = (string)reader[nameof(Inmueble.Direccion)],
+                                    Duenio = new Propietario {
+                                        Nombre = (string)reader[nameof(Propietario.Nombre)],
+                                    }
+                            },
+                            
+                            Garante= new Garante
+                            {
+                                Id=(int)reader[nameof(Garante.Id)],
+                                DNI = (string)reader[nameof(Garante.DNI)],
+                                Apellido = (string)reader[nameof(Garante.Apellido)],
                             }
                         };
                         res.Add(contrato);

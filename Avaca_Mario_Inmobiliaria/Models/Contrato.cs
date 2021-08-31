@@ -9,6 +9,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
 {
     public class Contrato
     {
+        [Display(Name = "Código")]
         public int Id { get; set; }
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }

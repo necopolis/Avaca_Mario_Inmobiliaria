@@ -64,6 +64,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             CantAmbiente = reader.GetInt32(4),
                             Precio = reader.GetDecimal(5),
                             Activo = reader.GetBoolean(6),
+                            PropietarioId=reader.GetInt32(7),
                             Duenio = new Propietario
                             {
                                 Id = reader.GetInt32(7),
@@ -123,9 +124,9 @@ namespace Avaca_Mario_Inmobiliaria.Models
             Inmueble inmueble = null;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT Id, Direccion, Uso, Tipo, CantAmbiente, Precio,Activo, PropietarioId , p.Nombre, p.Apellido
+                string sql = @"SELECT i.Id, i.Direccion, i.Uso, i.Tipo, i.CantAmbiente, i.Precio, i.Activo, i.PropietarioId , p.Nombre, p.Apellido
                      FROM Inmueble i INNER JOIN Propietario p ON i.PropietarioId = p.Id
-                    WHERE Id=@Id";
+                    WHERE i.Id=@Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     comm.Parameters.AddWithValue("@Id", id);
@@ -136,17 +137,18 @@ namespace Avaca_Mario_Inmobiliaria.Models
                         inmueble = new Inmueble
                         {
                             Id = reader.GetInt32(0),
-                            Direccion = (string)reader[nameof(Inmueble.Direccion)],
-                            Uso = (string)reader[nameof(Inmueble.Uso)],
-                            Tipo = (string)reader[nameof(Inmueble.Tipo)],
-                            CantAmbiente = (int)reader[nameof(Inmueble.CantAmbiente)],
-                            Precio = (decimal)reader[nameof(Inmueble.Precio)],
-                            Activo = (bool)reader[nameof(Inmueble.Activo)],
+                            Direccion = reader.GetString(1),
+                            Uso = reader.GetString(2),
+                            Tipo = reader.GetString(3),
+                            CantAmbiente = reader.GetInt32(4),
+                            Precio = reader.GetDecimal(5),
+                            Activo = reader.GetBoolean(6),
+                            PropietarioId = reader.GetInt32(7),
                             Duenio = new Propietario
                             {
-                                Id = reader.GetInt32(6),
-                                Nombre = reader.GetString(7),
-                                Apellido = reader.GetString(8),
+                                Id = reader.GetInt32(7),
+                                Nombre = reader.GetString(8),
+                                Apellido = reader.GetString(9),
                             }
                         };
                     }

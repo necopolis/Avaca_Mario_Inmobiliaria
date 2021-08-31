@@ -71,6 +71,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         public ActionResult Edit(int id)
         {
             var res = data.ObtenerPorId(id);
+            ViewBag.Propietarios = dataProp.ObtenerTodos();
             return View(res);
         }
 
