@@ -34,7 +34,17 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: ContratoController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            try
+            {
+                var res = dataContrato.ObtenerPorId(id);
+                return View(res);
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction(nameof(Index));
+                //throw;
+            }
+            
         }
 
         // GET: ContratoController/Create
@@ -64,8 +74,9 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                     return RedirectToAction(nameof(Index));
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
                 return View();
             }
         }
@@ -73,19 +84,33 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: ContratoController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var res = dataContrato.ObtenerPorId(id);
+            ViewBag.Inmuebles = dataInmueble.ObtenerTodos();
+            ViewBag.Garantes = dataGarante.ObtenerTodos();
+            ViewBag.Inquilinos = dataInquilino.ObtenerTodos();
+            return View(res);
         }
 
         // POST: ContratoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Contrato contrato)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var res = dataContrato.Modificacion(contrato);
+                if (res>0)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ViewBag.Error = "No se pudo dar de baja intente nuevamente";
+                    return View(res);
+                }
+                
             }
-            catch
+            catch (Exception ex)
             {
                 return View();
             }
@@ -94,7 +119,8 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: ContratoController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var res = dataContrato.ObtenerPorId(id);
+            return View(res);
         }
 
         // POST: ContratoController/Delete/5
@@ -104,10 +130,19 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var res = dataContrato.Baja(id);
+                if (res > 0)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else {
+                    ViewBag.Error = "Algo ha salido mal no se ha podido eliminar";
+                    return View();
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                ViewBag.Error = ex.Message;
                 return View();
             }
         }

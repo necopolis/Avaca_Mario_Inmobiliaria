@@ -4,10 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Lista de Contratos</h1>
+<h1>Lista de contratos</h1>
 
 <p>
-    <a asp-action="Create">Crear Nuevo Contrato</a>
+    <a asp-action="Create">Crear nuevo Contrato</a>
 </p>
 <table class="table">
     <thead>
@@ -46,16 +46,16 @@
                 @Html.DisplayFor(modelItem => item.FechaFin)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Inquilino.DNI + " " + item.Inquilino.Apellido)
+                @(item.Inquilino.DNI+ " " + item.Inquilino.Apellido)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Garante.DNI +" "+ item.Garante.Apellido)
+                @(item.Garante.DNI+" "+ item.Garante.Apellido)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Inmueble.Direccion +" "+item.Inmueble.Uso +" "+item.Inmueble.Precio)
+                @(item.Inmueble.Direccion+" Precio: $"+ item.Inmueble.Precio)
             </td>
             <td>
-                @Html.ActionLink("Editar", "Edit", new { id=item.Id }) |
+                @Html.ActionLink("Editar", "Edit", new { id = item.Id }) |
                 @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
                 @Html.ActionLink("Eliminar", "Delete", new { id = item.Id })
             </td>
