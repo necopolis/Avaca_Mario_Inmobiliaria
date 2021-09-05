@@ -19,8 +19,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
             int res = -1;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"INSERT INTO Garante (DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo, Sueldo)
-                                VALUES (@DNI, @Nombre, @Apellido, @Telefono, @Email, @LugarTrabajo, @Sueldo);
+                string sql = @"INSERT INTO Garante (DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo, Sueldo, Activo)
+                                VALUES (@DNI, @Nombre, @Apellido, @Telefono, @Email, @LugarTrabajo, @Sueldo, @Activo);
                                 SELECT SCOPE_IDENTITY();";
 
                 using (SqlCommand comm = new SqlCommand(sql, conn))
@@ -32,6 +32,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Email", garante.Email);
                     comm.Parameters.AddWithValue("@LugarTrabajo", garante.LugarTrabajo);
                     comm.Parameters.AddWithValue("@Sueldo", garante.Sueldo);
+                    comm.Parameters.AddWithValue("@Activo", 1);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteScalar());
                     conn.Close();
@@ -76,7 +77,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             Garante i = null;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo, Sueldo FROM Garante 
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo, Sueldo, Activo FROM Garante 
                                 WHERE Id=@id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -94,7 +95,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             Telefono = (string)reader[nameof(Garante.Telefono)],
                             Email = (string)reader[nameof(Garante.Email)],
                             LugarTrabajo = (string)reader[nameof(Garante.LugarTrabajo)],
-                            Sueldo = (decimal)reader[nameof(Garante.Sueldo)]
+                            Sueldo = (decimal)reader[nameof(Garante.Sueldo)],
+                            Activo = (bool)reader[nameof(Garante.Activo)]
                         };
                     }
                     conn.Close();
@@ -108,7 +110,11 @@ namespace Avaca_Mario_Inmobiliaria.Models
             int res = -1;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"DELETE FROM Garante WHERE Id = @Id ;";
+                string sql = @"UPDATE Garante 
+                               SET 
+                                Activo=0
+                                WHERE
+                                Id = @Id";
 
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -126,7 +132,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             IList<Garante> res = new List<Garante>();
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo, Sueldo
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo, Sueldo, Activo
                               FROM Garante";
 
                 using (SqlCommand comm = new SqlCommand(sql, conn))
@@ -144,7 +150,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             Telefono = (string)reader[nameof(Garante.Telefono)],
                             Email = (string)reader[nameof(Garante.Email)],
                             LugarTrabajo = (string)reader[nameof(Garante.LugarTrabajo)],
-                            Sueldo = (decimal)reader[nameof(Garante.Sueldo)]
+                            Sueldo = (decimal)reader[nameof(Garante.Sueldo)],
+                            Activo = (bool)reader[nameof(Garante.Activo)]
                         };
                         res.Add(i);
                     }

@@ -24,6 +24,11 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         public ActionResult Index()
         {
             var lista = data.ObtenerTodos();
+            if (TempData.ContainsKey("Message") || TempData.ContainsKey("Error"))
+            {
+                ViewBag.Message = TempData["Message"];
+                ViewBag.Error = TempData["Error"];
+            }
             return View(lista);
         }
 
@@ -47,14 +52,35 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         {
             try
             {
-                data.Alta(i);
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    var res = data.Alta(i); 
+                    if (res>0)
+                    {
+                        TempData["Message"] = "Inquilino Creado Correctamente";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ViewBag.Error = @"No se ha podido Agregar el Inquilino 
+                                        Intentelo mas tarde o realice el reclamo a servicio tecnico";
+                        return View();
+                    }
+                }
+                else
+                {
+                    ViewBag.Error = "Los datos no son validos, revise el tipo de informacion que ingresa, he intente nuevamente";
+                    return View();
+                }
+
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
-                //ViewBag.StackTrate = ex.StackTrace;
-                return View();
+                TempData["Error"] = @"No se ha podido Agregar el Inquilino, 
+                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+                //return Json(new { Error = ex.Message });
             }
         }
 
@@ -72,14 +98,35 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         {
             try
             {
-                data.Modificar(id, inquilino);
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    var res = data.Modificar(id, inquilino);
+                    if (res > 0)
+                    {
+                        TempData["Message"] = "Inquilino Editada con exito";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ViewBag.Error = @"No se ha podido Agregar el Inquilino
+                                        Intentelo mas tarde o realice el reclamo a servicio tecnico";
+                        return View();
+                    }
+                }
+                else
+                {
+                    ViewBag.Error = "Los datos no son validos, revise el tipo de informacion que ingresa, he intente nuevamente";
+                    return View();
+                }
+
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
-                //ViewBag.StackTrate = ex.StackTrace;
-                return View();
+                TempData["Error"] = @"No se ha podido Agregar el Inquilino, 
+                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+                //return Json(new { Error = ex.Message });
             }
         }
         public ActionResult Delete(int id)
@@ -108,9 +155,11 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
-                //ViewBag.StackTrate = ex.StackTrace;
-                return View();
+                TempData["Error"] = @"No se ha podido Eliminar el Inquilino, 
+                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+                //return Json(new { Error = ex.Message });
             }
         }
     }

@@ -31,10 +31,10 @@
                 @Html.DisplayNameFor(model => model.Precio)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Activo)
+                @Html.DisplayNameFor(model => model.PropietarioId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PropietarioId)
+                @Html.DisplayNameFor(model => model.Activo)
             </th>
             <th>Acciones</th>
         </tr>
@@ -61,13 +61,13 @@
                 @Html.DisplayFor(modelItem => item.Precio)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Activo)
-            </td>
-            <td>
                 @(item.Duenio.Nombre + " " + item.Duenio.Apellido)
             </td>
             <td>
-                @Html.ActionLink("Editar", "Edit", new { id=item.Id}) |
+                @Html.DisplayFor(modelItem => item.Activo)
+            </td>
+            <td>
+                @Html.ActionLink("Editar", "Edit", new { id = item.Id }) |
                 @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
                 @Html.ActionLink("Elimiar", "Delete", new { id = item.Id })
             </td>

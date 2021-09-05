@@ -29,7 +29,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Tipo", inmueble.Tipo);
                     comm.Parameters.AddWithValue("@CantAmbiente", inmueble.CantAmbiente);
                     comm.Parameters.AddWithValue("@Precio", inmueble.Precio);
-                    comm.Parameters.AddWithValue("@Activo", inmueble.Activo);
+                    comm.Parameters.AddWithValue("@Activo", 1);
                     comm.Parameters.AddWithValue("@PropietarioId", inmueble.PropietarioId);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteScalar());
@@ -84,7 +84,9 @@ namespace Avaca_Mario_Inmobiliaria.Models
             int res = -1;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"DELETE FROM Inmueble WHERE Id = @Id";
+                string sql = @"UPDATE Inmueble SET
+                    Activo=0
+                    WHERE Id = @Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     comm.Parameters.AddWithValue("@Id", id);
@@ -101,7 +103,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string sql =  @"UPDATE Inmueble SET
-                    Direccion=@Direccion, Uso=@Uso, Tipo=@Tipo, CantAmbiente=@CantAmbiente, Precio=@Precio,Activo=@Activo, PropietarioId=@PropietarioId " +
+                    Direccion=@Direccion, Uso=@Uso, Tipo=@Tipo, CantAmbiente=@CantAmbiente, Precio=@Precio, PropietarioId=@PropietarioId " +
                     "WHERE Id = @Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -110,7 +112,6 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Tipo", inmueble.Tipo);
                     comm.Parameters.AddWithValue("@CantAmbiente", inmueble.CantAmbiente);
                     comm.Parameters.AddWithValue("@Precio", inmueble.Precio);
-                    comm.Parameters.AddWithValue("@Activo", inmueble.Activo);
                     comm.Parameters.AddWithValue("@PropietarioId", inmueble.PropietarioId);
                     conn.Open();
                     res = comm.ExecuteNonQuery();

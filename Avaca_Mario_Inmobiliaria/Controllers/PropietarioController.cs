@@ -22,7 +22,12 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: PropietarioController
         public ActionResult Index()
         {
-            var lista = data.ObtenerTodos(); 
+            var lista = data.ObtenerTodos();
+            if (TempData.ContainsKey("Message")|| TempData.ContainsKey("Error"))
+            {
+                ViewBag.Message = TempData["Message"];
+                ViewBag.Error = TempData["Error"];
+            }
             return View(lista);
         }
 
@@ -46,14 +51,38 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         {
             try
             {
-                data.Alta(propietario);
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    var res = data.Alta(propietario);
+                    if (res>0)
+                    {
+                        TempData["Message"] = "Propietario Creado Correctamente";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ViewBag.Error = @"No se ha podido Agregar el propietario
+                                        Intentelo mas tarde o realice el reclamo a servicio tecnico";
+                        return View();
+                    }
+                    
+                }
+                else
+                {
+                    ViewBag.Error = "Los datos no son validos, revise el tipo de informacion que ingresa, he intente nuevamente";
+                    return View();
+                }
+                
+                
+                
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
-                ViewBag.StackTrate = ex.StackTrace;
-                return View();
+                TempData["Error"] = @"No se ha podido Agregar el propietario, 
+                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+                //return Json(new { Error = ex.Message });
             }
         }
 
@@ -71,14 +100,38 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         {
             try
             {
-                data.Modificar(id, propietario);
-                return RedirectToAction(nameof(Index));
+                
+                //ModelState.IsValid utiliza la validacion del modelo [Requeride][EmailAddress][etc], etc alguien ingresa un valor incorrecto 
+                if (ModelState.IsValid)
+                {
+                    var res = data.Modificar(id, propietario);
+                    if (res>0)
+                    {
+                        TempData["Message"] = "Propiedad Editada con exito";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ViewBag.Error = @"No se ha podido Editar el propietario
+                                    Intentelo mas tarde o realice el reclamo a servicio tecnico";
+                        return View();
+                    }
+                    
+                }
+                else
+                {
+                    ViewBag.Error = "Los datos no son validos, revise el tipo de informacion que ingresa, he intente nuevamente";
+                    return View();
+                }
+                
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
-                ViewBag.StackTrate = ex.StackTrace;
-                return View();
+                TempData["Error"] = @"No se ha podido Editar el propietario, 
+                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+                //return Json(new { Error = ex.Message });
             }
         }
 
@@ -96,14 +149,29 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         {
             try
             {
-                data.Baja(id);
-                return RedirectToAction(nameof(Index));
+                var res = data.Baja(id);
+                if (res>0)
+                {
+                    ViewBag.Message = "Propietario Eliminado con Exito";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    ViewBag.Error = @"No se ha podido Eliminar el propietario
+                                    Intentelo mas tarde o realice el reclamo a servicio tecnico";
+                    return View();
+                }
+                
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
-                ViewBag.StackTrate = ex.StackTrace;
-                return View();
+                //ViewBag.Error = ex.Message;
+                //ViewBag.StackTrate = ex.StackTrace;
+                TempData["Error"] = @"No se ha podido Eliminar el propietario, 
+                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+                //return Json(new { Error = ex.Message });
             }
         }
     }

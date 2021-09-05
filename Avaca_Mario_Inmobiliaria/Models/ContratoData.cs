@@ -18,16 +18,17 @@ namespace Avaca_Mario_Inmobiliaria.Models
             int res = -1;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"INSERT INTO Contrato (FechaInicio, FechaFin, IniquilinoId, GaranteId, InmuebleId)
-                                VALUES (@FechaInicio, @FechaFin, @InquilinoId, @GaranteId, @InmuebleId);
+                string sql = @"INSERT INTO Contrato (FechaInicio, FechaFin, InquilinoId, GaranteId, InmuebleId, Activo)
+                                VALUES (@FechaInicio, @FechaFin, @InquilinoId, @GaranteId, @InmuebleId, @Activo);
                                 SELECT SCOPE_IDENTITY();";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     comm.Parameters.AddWithValue("@FechaInicio", contrato.FechaInicio);
-                    comm.Parameters.AddWithValue("@FechaInicio", contrato.FechaFin);
+                    comm.Parameters.AddWithValue("@FechaFin", contrato.FechaFin);
                     comm.Parameters.AddWithValue("@InquilinoId", contrato.InquilinoId);
                     comm.Parameters.AddWithValue("@GaranteId", contrato.GaranteId);
                     comm.Parameters.AddWithValue("@InmuebleId", contrato.InmuebleId);
+                    comm.Parameters.AddWithValue("@Activo", 1);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteScalar());
                     conn.Close();
@@ -39,17 +40,21 @@ namespace Avaca_Mario_Inmobiliaria.Models
         }
         public IList<Contrato> ObtenerTodos()
         {
-
+            /***
+             * ANOTACION AL PARECER NO ESTARIA FUNCIONANDO (casteo)reader[nameof(Clase.atributo)]
+             * Tuve que cambiar a reader.GetTipo(N°orden)
+             **/
             IList<Contrato> res = new List<Contrato>();
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT c.Id, c.FechaInicio, c.FechaFin, m.Precio,
-                    p.Apellido, i.Nombre, i.Apellido, g.Apellido, m.Id ,m.Direccion
-                    FROM Contrato c INNER JOIN Inquilino i ON c.InquilinoId = c.Id
-                    INNER JOIN Inmueble m ON c.InmuebleId = m.Id
-                    INNER JOIN Propietario p ON m.PropietarioId = p.Id
-                    INNER JOIN Garante g ON c.GaranteId = g.Id";
+                string sql = @"SELECT c.Id, c.FechaInicio, c.FechaFin, c.InmuebleId, c.InquilinoId, c.GaranteId,
+                                i.Id, i.DNI, i.Apellido,
+                                g.Id, g.DNI, g.Apellido,
+                                m.Id ,m.Direccion, m.Precio, m.Uso, c.Activo
+                                FROM Contrato c INNER JOIN Inquilino i ON c.InquilinoId = i.Id
+                                INNER JOIN Inmueble m ON c.InmuebleId = m.Id
+                                INNER JOIN Garante g ON c.GaranteId = g.Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     conn.Open();
@@ -58,32 +63,32 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     {
                         Contrato contrato = new Contrato
                         {
-                            Id = (int)reader[nameof(Contrato.Id)],
+                            Id = reader.GetInt32(0),
                             FechaInicio = (DateTime)reader[nameof(Contrato.FechaInicio)],
                             FechaFin = (DateTime)reader[nameof(Contrato.FechaFin)],
-                            InmuebleId = (int)reader[nameof(Contrato.InmuebleId)],
-                            GaranteId = (int)reader[nameof(Contrato.GaranteId)],
-                            InquilinoId = (int)reader[nameof(Contrato.InquilinoId)],
+                            InmuebleId = reader.GetInt32(3),
+                            InquilinoId = reader.GetInt32(4),
+                            GaranteId = reader.GetInt32(5),
+                            Activo = reader.GetBoolean(16),
                             Inquilino = new Inquilino
                             {
-                                Id = (int)reader[nameof(Inquilino.Id)],
-                                Nombre = (string)reader[nameof(Inquilino.Nombre)],
-                                Apellido = (string)reader[nameof(Inquilino.Apellido)],
+                                Id = reader.GetInt32(6),
+                                DNI = reader.GetString(7),
+                                Apellido = reader.GetString(8),
                             },
                             Inmueble = new Inmueble
                             {
-                                Id = (int)reader[nameof(Inmueble.Id)],
-                                Direccion = (string)reader[nameof(Inmueble.Direccion)],
-                                    Duenio = new Propietario {
-                                        Nombre = (string)reader[nameof(Propietario.Nombre)],
-                                    }
+                                Id = reader.GetInt32(12),
+                                Direccion = reader.GetString(13),
+                                Precio=reader.GetDecimal(14),
+                                Uso=reader.GetString(15)
                             },
                             
                             Garante= new Garante
                             {
-                                Id=(int)reader[nameof(Garante.Id)],
-                                DNI = (string)reader[nameof(Garante.DNI)],
-                                Apellido = (string)reader[nameof(Garante.Apellido)],
+                                Id= reader.GetInt32(9),
+                                DNI = reader.GetString(10),
+                                Apellido = reader.GetString(11),
                             }
                         };
                         res.Add(contrato);
@@ -98,7 +103,9 @@ namespace Avaca_Mario_Inmobiliaria.Models
             int res = -1;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"DELETE FROM Inmueble WHERE Id = @Id";
+                string sql = @"UPDATE Contrato SET
+                             Activo=0
+                             WHERE Id = @Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     comm.Parameters.AddWithValue("@Id", id);
@@ -109,23 +116,22 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return res;
         }
-        public int Modificacion(Inmueble inmueble)
+        public int Modificacion(Contrato contrato)
         {
             int res = -1;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"UPDATE Inmueble SET
-                    Direccion=@Direccion, Uso=@Uso, Tipo=@Tipo, CantAmbiente=@CantAmbiente, Precio=@Precio,Activo=@Activo, PropietarioId=@PropietarioId " +
-                    "WHERE Id = @Id";
+                string sql = @"UPDATE Contrato SET
+                    FechaInicio=@FechaInicio, FechaFin=@FechaFin, InquilinoId=@InquilinoId, GaranteId=@GaranteId, InmuebleId=@InmuebleId
+                    WHERE Id = @Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
-                    comm.Parameters.AddWithValue("@Direccion", inmueble.Direccion);
-                    comm.Parameters.AddWithValue("@Uso", inmueble.Uso);
-                    comm.Parameters.AddWithValue("@Tipo", inmueble.Tipo);
-                    comm.Parameters.AddWithValue("@CantAmbiente", inmueble.CantAmbiente);
-                    comm.Parameters.AddWithValue("@Precio", inmueble.Precio);
-                    comm.Parameters.AddWithValue("@Activo", inmueble.Activo);
-                    comm.Parameters.AddWithValue("@PropietarioId", inmueble.PropietarioId);
+                    comm.Parameters.AddWithValue("@FechaInicio", contrato.FechaInicio);
+                    comm.Parameters.AddWithValue("@FechaFin", contrato.FechaFin);
+                    comm.Parameters.AddWithValue("@InquilinoId", contrato.InquilinoId);
+                    comm.Parameters.AddWithValue("@GaranteId", contrato.GaranteId);
+                    comm.Parameters.AddWithValue("@InmuebleId", contrato.InmuebleId);
+                    comm.Parameters.AddWithValue("@Id", contrato.Id);
                     conn.Open();
                     res = comm.ExecuteNonQuery();
                     conn.Close();
@@ -133,14 +139,19 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return res;
         }
-        public Inmueble ObtenerPorId(int id)
+        public Contrato ObtenerPorId(int id)
         {
-            Inmueble inmueble = null;
+            Contrato contrato = null;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT Id, Direccion, Uso, Tipo, CantAmbiente, Precio,Activo, PropietarioId , p.Nombre, p.Apellido
-                     FROM Inmueble i INNER JOIN Propietario p ON i.PropietarioId = p.Id
-                    WHERE Id=@Id";
+                string sql = @"SELECT c.Id, c.FechaInicio, c.FechaFin, c.InmuebleId, c.InquilinoId, c.GaranteId,
+                                i.DNI, i.Apellido,
+                                g.DNI, g.Apellido,
+                                m.Direccion, m.Precio, m.Uso, c.Activo
+                                FROM Contrato c INNER JOIN Inquilino i ON c.InquilinoId = i.Id
+                                INNER JOIN Inmueble m ON c.InmuebleId = m.Id
+                                INNER JOIN Garante g ON c.GaranteId = g.Id
+                                WHERE c.Id=@Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     comm.Parameters.AddWithValue("@Id", id);
@@ -148,27 +159,41 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     var reader = comm.ExecuteReader();
                     if (reader.Read())
                     {
-                        inmueble = new Inmueble
+                        contrato = new Contrato
                         {
                             Id = reader.GetInt32(0),
-                            Direccion = (string)reader[nameof(Inmueble.Direccion)],
-                            Uso = (string)reader[nameof(Inmueble.Uso)],
-                            Tipo = (string)reader[nameof(Inmueble.Tipo)],
-                            CantAmbiente = (int)reader[nameof(Inmueble.CantAmbiente)],
-                            Precio = (decimal)reader[nameof(Inmueble.Precio)],
-                            Activo = (bool)reader[nameof(Inmueble.Activo)],
-                            Duenio = new Propietario
+                            FechaInicio = reader.GetDateTime(1),
+                            FechaFin = reader.GetDateTime(2),
+                            InmuebleId = reader.GetInt32(3),
+                            InquilinoId = reader.GetInt32(4),
+                            GaranteId = reader.GetInt32(5),
+                            Activo = reader.GetBoolean(13),
+                            Inquilino = new Inquilino
                             {
-                                Id = reader.GetInt32(6),
-                                Nombre = reader.GetString(7),
-                                Apellido = reader.GetString(8),
+                                Id = reader.GetInt32(4),
+                                DNI = reader.GetString(6),
+                                Apellido = reader.GetString(7),
+                            },
+                            Inmueble = new Inmueble
+                            {
+                                Id = reader.GetInt32(3),
+                                Direccion = reader.GetString(10),
+                                Precio = reader.GetDecimal(11),
+                                Uso = reader.GetString(12),
+                            },
+
+                            Garante = new Garante
+                            {
+                                Id = reader.GetInt32(5),
+                                DNI = reader.GetString(8) ,
+                                Apellido = reader.GetString(9),
                             }
                         };
                     }
                     conn.Close();
                 }
             }
-            return inmueble;
+            return contrato;
         }
 
 
