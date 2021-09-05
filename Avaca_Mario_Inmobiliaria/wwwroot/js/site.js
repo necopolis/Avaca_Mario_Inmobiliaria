@@ -3,6 +3,8 @@
 
 // Write your JavaScript code.
 
+
+
 function editar(x) {
     //#editarModal==id="editarModal"(Modal) .modal(show) para que se vea
 
@@ -24,4 +26,11 @@ $(document).ready(function () {
         function () {
             alert("Bye! You now leave p1!");
         });
+});
+
+const app = new Vue({
+    el: "#app",
+    data: {
+        titulo: "Hola mundo desde Vue - Bienvenidos"
+    }
 });

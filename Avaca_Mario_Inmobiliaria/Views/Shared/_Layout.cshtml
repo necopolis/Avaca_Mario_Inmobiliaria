@@ -49,12 +49,12 @@
         <main role="main" class="pb-3">
             @if (ViewBag.Error != null)
             {
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>Información:</strong> @ViewBag.Error
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true"></span><i class="fas fa-times-circle"></i>
-                </button>
-            </div>
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Información:</strong> @ViewBag.Error
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true"></span><i class="fas fa-times-circle"></i>
+                    </button>
+                </div>
             }
         </main>
     </div>
@@ -83,6 +83,8 @@
             &copy; 2021 - Inmobiliaria Avaca - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
         </div>
     </footer>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
