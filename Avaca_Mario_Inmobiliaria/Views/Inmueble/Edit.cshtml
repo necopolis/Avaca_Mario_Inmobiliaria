@@ -1,13 +1,13 @@
 ﻿@model Avaca_Mario_Inmobiliaria.Models.Inmueble
 
 @{
-    ViewData["Title"] = "Editar";
+    ViewData["Title"] = "Editando";
     var Propietarios = (IList<Propietario>)ViewBag.Propietarios;
 }
 
-<h1>Editar</h1>
+<h1>Editando</h1>
 
-<h4>Inmueble</h4>
+<h4>Inmueble del propietario @Model.Duenio.Apellido @Model.Duenio.Nombre</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
