@@ -27,7 +27,7 @@
             </div>
             <div class="form-group">
                 <label class="control-label">InquilinoId</label>
-                <select class="form-control" name="InquilinoId>
+                <select class="form-control" name="InquilinoId">
                     @foreach (var item in Inquilinos)
                     {
                         @:<option @(item.Id == Model.InquilinoId ? "selected" : "") value="@item.Id">@(item.DNI + " " + item.Apellido)</option>
@@ -37,7 +37,7 @@
             </div>
             <div class="form-group">
                 <label class="control-label">GaranteId</label>
-                <select class="form-control" name="GaranteId>
+                <select class="form-control" name="GaranteId">
                     @foreach (var item in Garantes)
                     {
                         @:<option @(item.Id == Model.GaranteId ? "selected" : "") value="@item.Id">@(item.DNI + " " + item.Apellido)</option>

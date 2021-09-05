@@ -37,27 +37,22 @@
                 <input asp-for="Email" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="LugarTrabajo" class="control-label"></label>
-                <input asp-for="LugarTrabajo" class="form-control" />
-                <span asp-validation-for="LugarTrabajo" class="text-danger"></span>
+            @*<div class="form-group">
+                        <label asp-for="LugarTrabajo" class="control-label"></label>
+                        <input asp-for="LugarTrabajo" class="form-control" />
+                        <span asp-validation-for="LugarTrabajo" class="text-danger"></span>
+            </div>*@
+                    <div class="form-group">
+                        <input type="submit" value="Guardar" class="btn btn-primary" />
+                    </div>
+                </form>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Activo" /> @Html.DisplayNameFor(model => model.Activo)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Guardar" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+        </div>
 
-<div>
-    <a asp-action="Index">Regresar a la Lista</a>
-</div>
+        <div>
+            <a asp-action="Index">Regresar a la Lista</a>
+        </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+        @section Scripts {
+            @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        }

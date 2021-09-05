@@ -19,7 +19,10 @@ namespace Avaca_Mario_Inmobiliaria.Models
         public string Tipo { get; set; }
         [Display(Name = "Ambientes"), Required(ErrorMessage = "Este campo es Obligatorio.")]
         public int CantAmbiente { get; set; }
+
+        [RegularExpression("[0-9]{2}", ErrorMessage = "Solo numeros")]
         public decimal Precio { get; set; }
+        
         public bool Activo { get; set; }
         
         [Display(Name = "Dueño")]

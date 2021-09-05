@@ -24,6 +24,11 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         public ActionResult Index()
         {
             var lista = data.ObtenerTodos();
+            if (TempData.ContainsKey("Message") || TempData.ContainsKey("Error"))
+            {
+                ViewBag.Message = TempData["Message"];
+                ViewBag.Error = TempData["Error"];
+            }
             return View(lista);
         }
 
@@ -48,22 +53,35 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         {
             try
             {
-                var res= data.Alta(inmueble);
-                if (res > 0)
+                if (ModelState.IsValid)
                 {
+                    var res = data.Alta(inmueble);
+                    if (res > 0)
+                    {
+                        TempData["Message"] = "Inmueble Creado Correctamente";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ViewBag.Error = @"No se ha podido Agregar el Inmuebles 
+                                        Intentelo mas tarde o realice el reclamo a servicio tecnico";
+                        return View();
+                    }
 
-                    return RedirectToAction(nameof(Index));
+                }else
+                {
+                    ViewBag.Error = "Los datos no son validos, revise el tipo de informacion que ingresa, he intente nuevamente";
+                    return View();
                 }
-                else {
-                    Exception ex = new Exception("No se ha podido guardar el inmuebele intente nuevamente");
-                    throw ex;
-                }
+
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
-                //ViewBag.StackTrate = ex.StackTrace;
-                return View();
+                TempData["Error"] = @"No se ha podido Agregar el Inmueble, 
+                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+                //return Json(new { Error = ex.Message });
             }
         }
 
@@ -82,14 +100,36 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         {
             try
             {
-                data.Modificacion(inmueble);
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    var res = data.Modificacion(inmueble);
+                    if (res > 0)
+                    {
+                        TempData["Message"] = "Inmueble Creado Correctamente";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ViewBag.Error = @"No se ha podido Agregar el Inmueble
+                                        Intentelo mas tarde o realice el reclamo a servicio tecnico";
+                        return View();
+                    }
+                    
+                }
+                else
+                {
+                    ViewBag.Error = "Los datos no son validos, revise el tipo de informacion que ingresa, he intente nuevamente";
+                    return View();
+                }
+                
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
-                //ViewBag.StackTrate = ex.StackTrace;
-                return View();
+                TempData["Error"] = @"No se ha podido Editar el Inmueble, 
+                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+                //return Json(new { Error = ex.Message });
             }
         }
 
@@ -112,8 +152,8 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
-                //ViewBag.StackTrate = ex.StackTrace;
+                //throw;
+                //return Json(new { Error = ex.Message });
                 return View();
             }
         }

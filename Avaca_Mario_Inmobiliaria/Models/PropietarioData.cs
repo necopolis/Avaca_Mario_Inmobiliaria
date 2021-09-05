@@ -32,7 +32,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Apellido", propietario.Apellido);
                     comm.Parameters.AddWithValue("@Telefono", propietario.Telefono);
                     comm.Parameters.AddWithValue("@Email", propietario.Email);
-                    comm.Parameters.AddWithValue("@Activo", propietario.Activo);
+                    comm.Parameters.AddWithValue("@Activo", 1);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteScalar());
                     conn.Close();
@@ -49,7 +49,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             {
                 string sql = @"UPDATE Propietario 
                                SET 
-                                DNI = @DNI, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email, Activo=@Activo
+                                DNI = @DNI, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email
                               WHERE
                                  Id = @Id";
 
@@ -60,7 +60,6 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Apellido", propietario.Apellido);
                     comm.Parameters.AddWithValue("@Telefono", propietario.Telefono);
                     comm.Parameters.AddWithValue("@Email", propietario.Email);
-                    comm.Parameters.AddWithValue("@Activo", propietario.Activo);
                     comm.Parameters.AddWithValue("@Id", id);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteNonQuery());
@@ -75,7 +74,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             Propietario i = null;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, Activo FROM Propietario 
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email FROM Propietario 
                                 WHERE Id=@id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -92,7 +91,6 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             Apellido = (string)reader[nameof(Propietario.Apellido)],
                             Telefono = (string)reader[nameof(Propietario.Telefono)],
                             Email = (string)reader[nameof(Propietario.Email)],
-                            Activo = (bool)reader[nameof(Propietario.Activo)]
                         };
                     }
                     conn.Close();
@@ -106,7 +104,11 @@ namespace Avaca_Mario_Inmobiliaria.Models
             int res = -1;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"DELETE FROM Propietario WHERE Id = @Id ;";
+                string sql = @"UPDATE Propietario 
+                               SET 
+                                Activo=0
+                              WHERE
+                                 Id = @Id";
 
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {

@@ -18,8 +18,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
             int res = -1;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"INSERT INTO Contrato (FechaInicio, FechaFin, InquilinoId, GaranteId, InmuebleId)
-                                VALUES (@FechaInicio, @FechaFin, @InquilinoId, @GaranteId, @InmuebleId);
+                string sql = @"INSERT INTO Contrato (FechaInicio, FechaFin, InquilinoId, GaranteId, InmuebleId, Activo)
+                                VALUES (@FechaInicio, @FechaFin, @InquilinoId, @GaranteId, @InmuebleId, @Activo);
                                 SELECT SCOPE_IDENTITY();";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -28,6 +28,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@InquilinoId", contrato.InquilinoId);
                     comm.Parameters.AddWithValue("@GaranteId", contrato.GaranteId);
                     comm.Parameters.AddWithValue("@InmuebleId", contrato.InmuebleId);
+                    comm.Parameters.AddWithValue("@Activo", 1);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteScalar());
                     conn.Close();
@@ -50,7 +51,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                 string sql = @"SELECT c.Id, c.FechaInicio, c.FechaFin, c.InmuebleId, c.InquilinoId, c.GaranteId,
                                 i.Id, i.DNI, i.Apellido,
                                 g.Id, g.DNI, g.Apellido,
-                                m.Id ,m.Direccion, m.Precio, m.Uso
+                                m.Id ,m.Direccion, m.Precio, m.Uso, c.Activo
                                 FROM Contrato c INNER JOIN Inquilino i ON c.InquilinoId = i.Id
                                 INNER JOIN Inmueble m ON c.InmuebleId = m.Id
                                 INNER JOIN Garante g ON c.GaranteId = g.Id";
@@ -68,6 +69,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             InmuebleId = reader.GetInt32(3),
                             InquilinoId = reader.GetInt32(4),
                             GaranteId = reader.GetInt32(5),
+                            Activo = reader.GetBoolean(16),
                             Inquilino = new Inquilino
                             {
                                 Id = reader.GetInt32(6),
@@ -101,7 +103,9 @@ namespace Avaca_Mario_Inmobiliaria.Models
             int res = -1;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"DELETE FROM Contrato WHERE Id = @Id";
+                string sql = @"UPDATE Contrato SET
+                             Activo=0
+                             WHERE Id = @Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     comm.Parameters.AddWithValue("@Id", id);
@@ -122,11 +126,11 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     WHERE Id = @Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
-                    comm.Parameters.AddWithValue("@Direccion", contrato.FechaInicio);
-                    comm.Parameters.AddWithValue("@Uso", contrato.FechaFin);
-                    comm.Parameters.AddWithValue("@Tipo", contrato.InquilinoId);
-                    comm.Parameters.AddWithValue("@CantAmbiente", contrato.GaranteId);
-                    comm.Parameters.AddWithValue("@Precio", contrato.InmuebleId);
+                    comm.Parameters.AddWithValue("@FechaInicio", contrato.FechaInicio);
+                    comm.Parameters.AddWithValue("@FechaFin", contrato.FechaFin);
+                    comm.Parameters.AddWithValue("@InquilinoId", contrato.InquilinoId);
+                    comm.Parameters.AddWithValue("@GaranteId", contrato.GaranteId);
+                    comm.Parameters.AddWithValue("@InmuebleId", contrato.InmuebleId);
                     comm.Parameters.AddWithValue("@Id", contrato.Id);
                     conn.Open();
                     res = comm.ExecuteNonQuery();
@@ -143,7 +147,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                 string sql = @"SELECT c.Id, c.FechaInicio, c.FechaFin, c.InmuebleId, c.InquilinoId, c.GaranteId,
                                 i.DNI, i.Apellido,
                                 g.DNI, g.Apellido,
-                                m.Direccion, m.Precio, m.Uso
+                                m.Direccion, m.Precio, m.Uso, c.Activo
                                 FROM Contrato c INNER JOIN Inquilino i ON c.InquilinoId = i.Id
                                 INNER JOIN Inmueble m ON c.InmuebleId = m.Id
                                 INNER JOIN Garante g ON c.GaranteId = g.Id
@@ -163,6 +167,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             InmuebleId = reader.GetInt32(3),
                             InquilinoId = reader.GetInt32(4),
                             GaranteId = reader.GetInt32(5),
+                            Activo = reader.GetBoolean(13),
                             Inquilino = new Inquilino
                             {
                                 Id = reader.GetInt32(4),

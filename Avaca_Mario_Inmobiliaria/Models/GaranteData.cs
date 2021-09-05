@@ -32,7 +32,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Email", garante.Email);
                     comm.Parameters.AddWithValue("@LugarTrabajo", garante.LugarTrabajo);
                     comm.Parameters.AddWithValue("@Sueldo", garante.Sueldo);
-                    comm.Parameters.AddWithValue("@Activo", garante.Activo);
+                    comm.Parameters.AddWithValue("@Activo", 1);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteScalar());
                     conn.Close();
@@ -50,7 +50,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                 string sql = @"UPDATE Garante 
                                SET 
                                 DNI = @DNI, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email, 
-                                LugarTrabajo=@LugarTrabajo, Sueldo=@Sueldo, Activo=@Activo
+                                LugarTrabajo=@LugarTrabajo, Sueldo=@Sueldo
                                     WHERE
                                         Id = @Id";
 
@@ -63,7 +63,6 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Email", garante.Email);
                     comm.Parameters.AddWithValue("@LugarTrabajo", garante.LugarTrabajo);
                     comm.Parameters.AddWithValue("@Sueldo", garante.Sueldo);
-                    comm.Parameters.AddWithValue("@Activo", garante.Activo);
                     comm.Parameters.AddWithValue("@Id", id);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteNonQuery());
@@ -111,7 +110,11 @@ namespace Avaca_Mario_Inmobiliaria.Models
             int res = -1;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"DELETE FROM Garante WHERE Id = @Id ;";
+                string sql = @"UPDATE Garante 
+                               SET 
+                                Activo=0
+                                WHERE
+                                Id = @Id";
 
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {

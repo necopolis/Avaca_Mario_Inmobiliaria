@@ -28,6 +28,11 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         public ActionResult Index()
         {
             var lista = dataContrato.ObtenerTodos();
+            if (TempData.ContainsKey("Message") || TempData.ContainsKey("Error"))
+            {
+                ViewBag.Message = TempData["Message"];
+                ViewBag.Error = TempData["Error"];
+            }
             return View(lista);
         }
 
@@ -63,21 +68,34 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         {
             try
             {
-                var res = dataContrato.Alta(contrato);
-                if (res > 0)
+                if (ModelState.IsValid)
                 {
-                    return RedirectToAction(nameof(Index));
+                    var res = dataContrato.Alta(contrato);
+                    if (res > 0)
+                    {
+                        TempData["Message"] = "Contrato Creado Correctamente";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ViewBag.Error = "No se ha podido cargar el contrato, intente nuevamente";
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
                 else
                 {
-                    ViewBag.Error = "No se ha podido cargar el contrato, intente nuevamente";
-                    return RedirectToAction(nameof(Index));
+                    ViewBag.Error = "Los datos no son validos, revise el tipo de informacion que ingresa, he intente nuevamente";
+                    return View();
                 }
+
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
-                return View();
+                TempData["Error"] = @"No se ha podido Agregar el Inquilino, 
+                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+                //return Json(new { Error = ex.Message });
             }
         }
 
@@ -98,21 +116,35 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         {
             try
             {
-                var res = dataContrato.Modificacion(contrato);
-                if (res>0)
+                if (ModelState.IsValid)
                 {
-                    return RedirectToAction(nameof(Index));
+                    var res = dataContrato.Modificacion(contrato);
+                    if (res > 0)
+                    {
+                        TempData["Message"] = "Contrato Editado Correctamente";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ViewBag.Error = "No se pudo dar de baja intente nuevamente";
+                        return View(res);
+                    }
                 }
                 else
                 {
-                    ViewBag.Error = "No se pudo dar de baja intente nuevamente";
-                    return View(res);
+                    ViewBag.Error = "Los datos no son validos, revise el tipo de informacion que ingresa, he intente nuevamente";
+                    return View();
                 }
-                
+
+
             }
             catch (Exception ex)
             {
-                return View();
+                TempData["Error"] = @"No se ha podido Editar el Contrato, 
+                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+                //return Json(new { Error = ex.Message });
             }
         }
 
@@ -142,8 +174,11 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             }
             catch (Exception ex)
             {
-                ViewBag.Error = ex.Message;
-                return View();
+                TempData["Error"] = @"No se ha podido Agregar el Inquilino, 
+                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+                //return Json(new { Error = ex.Message });
             }
         }
     }

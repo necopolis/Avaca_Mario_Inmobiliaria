@@ -12,7 +12,9 @@ namespace Avaca_Mario_Inmobiliaria.Models
         [Display(Name = "Código")]
         public int Id { get; set; }
 
-        [Display(Name = "Fecha Inicio"), DataType(DataType.Date), Required(ErrorMessage = "Este campo es Obligatorio.")]
+        [Display(Name = "Fecha Inicio"), 
+        DataType(DataType.Date), 
+        Required(ErrorMessage = "Este campo es Obligatorio.")]
         public DateTime? FechaInicio { get; set; }
 
         [Display(Name = "Fecha Fin"), DataType(DataType.Date), Required(ErrorMessage = "Este campo es Obligatorio.")]
@@ -40,5 +42,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
         // Como si fuera acceso directo a la otra tabla
         [ForeignKey(nameof(InmuebleId))]
         public Inmueble Inmueble { get; set; }
+
+        public bool Activo { get; set; }
     }
 }

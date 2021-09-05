@@ -11,7 +11,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
         [Display(Name = "Código")]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Este campo es Obligatorio."), RegularExpression("[0-9]{10}", ErrorMessage = "Solo numeros")]
+        [Required(ErrorMessage = "Este campo es Obligatorio."), RegularExpression("[0-9]{8,10}", ErrorMessage = "Solo numeros y hasta 10 digitos")]
         public string DNI { get; set; }
 
         //[RegularExpression(@"^[a-zA-Z\s]{2,254}", ErrorMessage = "Solo letras o espacios"), Display(Prompt = "Juan")]
