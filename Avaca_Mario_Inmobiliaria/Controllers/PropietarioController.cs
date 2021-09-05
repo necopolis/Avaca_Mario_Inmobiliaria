@@ -23,7 +23,11 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         public ActionResult Index()
         {
             var lista = data.ObtenerTodos();
-           ViewBag.Message = TempData["Message"];
+            if (TempData.ContainsKey("Message")|| TempData.ContainsKey("Error"))
+            {
+                ViewBag.Message = TempData["Message"];
+                ViewBag.Error = TempData["Error"];
+            }
             return View(lista);
         }
 
@@ -47,28 +51,36 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         {
             try
             {
-                var res = data.Alta(propietario);
-                if (res > 0)
+                if (ModelState.IsValid)
                 {
-                    ViewBag.Message = "Propietario Agregado con Exito";
-                    ViewBag.Message = "BAG MENSAJE Logrado con exito";
-                    ViewBag.Error = "BAG ERROR Logrado sin exito";
-                    TempData["Message"] = "TEMPO DATA Logrado con exito";
-                    return RedirectToAction(nameof(Index));
+                    var res = data.Alta(propietario);
+                    if (res>0)
+                    {
+                        TempData["Message"] = "Propietario Creado Correctamente";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ViewBag.Error = @"No se ha podido Agregar el propietario"
+                                        + propietario.Apellido + @"Intentelo mas tarde o realice el reclamo a servicio tecnico";
+                        return View();
+                    }
+                    
                 }
                 else
                 {
-                    ViewBag.Error = @"No se ha podido Agregar el propietario" 
-                                    + propietario.Apellido + @"Intentelo mas tarde o realice el reclamo a servicio tecnico";
+                    ViewBag.Error = "Los datos no son validos, revise el tipo de informacion que ingresa, he intente nuevamente";
                     return View();
                 }
+                
+                
                 
             }
             catch (Exception ex)
             {
-                ViewBag.Error = @"No se ha podido Agregar el propietario, 
+                TempData["Error"] = @"No se ha podido Agregar el propietario, 
                                 se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
-                return View();
+                return RedirectToAction(nameof(Index));
             }
         }
 
@@ -86,9 +98,15 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         {
             try
             {
-                var res = data.Modificar(id, propietario);
-                if (res>0)
+                
+                //ModelState.IsValid utiliza la validacion del modelo [Requeride][EmailAddress][etc], etc alguien ingresa un valor incorrecto 
+                if (ModelState.IsValid)
                 {
+                    var res = data.Modificar(id, propietario);
+                    if (res>0)
+                    {
+
+                    }
                     TempData["Message"] = "Logrado con exito";
                     return RedirectToAction(nameof(Index));
                 }
