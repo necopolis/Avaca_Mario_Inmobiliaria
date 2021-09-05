@@ -48,11 +48,8 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             try
             {
                 var res = data.Alta(propietario);
-                if (res > 0)
+                if ((res > 0) && (ModelState.IsValid))
                 {
-                    ViewBag.Message = "Propietario Agregado con Exito";
-                    ViewBag.Message = "BAG MENSAJE Logrado con exito";
-                    ViewBag.Error = "BAG ERROR Logrado sin exito";
                     TempData["Message"] = "TEMPO DATA Logrado con exito";
                     return RedirectToAction(nameof(Index));
                 }
@@ -87,7 +84,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             try
             {
                 var res = data.Modificar(id, propietario);
-                if (res>0)
+                if ((res > 0) && (ModelState.IsValid))
                 {
                     TempData["Message"] = "Logrado con exito";
                     return RedirectToAction(nameof(Index));
