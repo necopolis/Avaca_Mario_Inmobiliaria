@@ -49,6 +49,10 @@ namespace Avaca_Mario_Inmobiliaria
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
+                    name: "SearchInquilinoContratos",
+                    pattern: "Pago/Inquilino/{dni}", new { controller = "Pago", action = "Inquilino" });
+
+                endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });

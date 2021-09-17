@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -196,6 +197,82 @@ namespace Avaca_Mario_Inmobiliaria.Models
             return contrato;
         }
 
+        public IList<Contrato> AllByInquilino(int id)
+        {
+            IList<Contrato> lista = new List<Contrato>();
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT 
+                                c.Id, c.InmuebleId, c.InquilinoId, c.FechaInicio, c.FechaFin, c.GaranteId, 
+                                i.Id, i.Direccion, i.Precio, 
+                                i2.Nombre, i2.Apellido,
+                                g.Nombre, g.Apellido,
+                                p.Id, p.Nombre, p.Apellido
+                                FROM Contrato c INNER JOIN Inmueble i ON c.InmuebleId = i.Id
+                                INNER JOIN Propietario p ON i.PropietarioId = p.Id
+                                INNER JOIN Garante g ON c.GaranteId = g.Id
+                                INNER JOIN Inquilino i2 ON c.InquilinoId = i2.Id WHERE i2.Id = @id ";
+
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@id", id);
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        Propietario p = new Propietario
+                        {
+                            Id = reader.GetInt32(13),
+                            Nombre = reader.GetString(14),
+                            Apellido = reader.GetString(15),
+                        };
+
+                        Inmueble i = new Inmueble
+                        {
+                            Id = reader.GetInt32(6),
+                            Direccion = reader.GetString(7),
+                            Precio = reader.GetDecimal(8),
+                            PropietarioId= reader.GetInt32(13),
+                            Duenio = p
+                        };
+
+                        Inquilino i2 = new Inquilino
+                        {
+                            Id = reader.GetInt32(2),
+                            Nombre = reader.GetString(9),
+                            Apellido = reader.GetString(10)
+                        };
+                        Garante g = new Garante
+                        {
+                            Nombre = reader.GetString(11),
+                            Apellido = reader.GetString(12)
+                        };
+
+                        Contrato c = new Contrato
+                        {
+                            Id = reader.GetInt32(0),
+                            InmuebleId = reader.GetInt32(1),
+                            InquilinoId = reader.GetInt32(2),
+                            FechaInicio = reader.GetDateTime(3),
+                            FechaFin = reader.GetDateTime(4),
+                            Inmueble = i,
+                            Inquilino = i2,
+                            Garante = g
+                        };
+                        
+
+                        lista.Add(c);
+                    }
+
+                    conn.Close();
+                }
+
+            }
+
+            return lista;
+        }
 
     }
 }

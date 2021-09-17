@@ -12,12 +12,13 @@ namespace Avaca_Mario_Inmobiliaria.Models
         [Display(Name = "Código")]
         public int Id { get; set; }
 
-        [Display(Name = "Pago N°")]
+        [Display(Name = "Codigo de Pago")]
         public int NumeroPago { get; set; }
 
-        [Display(Name = "Fecha")]
+        [Display(Name = "Fecha de pago"), Required(ErrorMessage ="Campo solicitado")]
         public DateTime? FechaPago { get; set; }
 
+        [Display(Name ="Monto a Pagar"), Required(ErrorMessage = "Campo solicitado"), DataType(DataType.Currency)]
         public decimal Importe { get; set; }
         
         [Display(Name = "Contrato")]

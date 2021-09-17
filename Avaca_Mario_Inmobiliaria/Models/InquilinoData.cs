@@ -101,6 +101,36 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return i;
         }
+        public Inquilino ObtenerPorDni(string dni)
+        {
+            Inquilino i = null;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo FROM Inquilino 
+                                WHERE DNI=@dni";
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@DNI", dni);
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        i = new Inquilino
+                        {
+                            Id = reader.GetInt32(0),
+                            DNI = (string)reader[nameof(Inquilino.DNI)],
+                            Nombre = (string)reader[nameof(Inquilino.Nombre)],
+                            Apellido = (string)reader[nameof(Inquilino.Apellido)],
+                            Telefono = (string)reader[nameof(Inquilino.Telefono)],
+                            Email = (string)reader[nameof(Inquilino.Email)],
+                            LugarTrabajo = (string)reader[nameof(Inquilino.LugarTrabajo)]
+                        };
+                    }
+                    conn.Close();
+                }
+            }
+            return i;
+        }
 
         public int Baja(int id)
         {

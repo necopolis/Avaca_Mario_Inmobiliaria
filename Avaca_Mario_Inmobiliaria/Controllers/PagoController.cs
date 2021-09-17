@@ -1,4 +1,5 @@
 ﻿using Avaca_Mario_Inmobiliaria.Models;
+using InmobiliariaAlbornoz.ModelsAux;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -13,11 +14,15 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
     {
         protected readonly IConfiguration configuration;
         PagoData dataPago;
+        ContratoData dataContrato;
+        InquilinoData dataInquilino;
 
         public PagoController(IConfiguration configuration)
         {
             this.configuration = configuration;
             dataPago = new PagoData(configuration);
+            dataContrato = new ContratoData(configuration);
+            dataInquilino = new InquilinoData(configuration);
         }
             // GET: PagoController
             public ActionResult Index()
@@ -34,10 +39,43 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         }
 
         // GET: PagoController/Create
-        public ActionResult Create()
+        public ActionResult Create(int id)
+        {
+            if (id > 0) { 
+                Contrato c = dataContrato.ObtenerPorId(id);
+                if (c.Id > 0) {
+                    ViewBag.Contrato = c;
+                    return View();
+                }
+            }
+            return View();
+            
+        }
+
+        // GET: PagosController/Inquilino/{dni}
+        public ActionResult Inquilino(string dni)
         {
 
-            return View();
+            PagoCreate pc = new PagoCreate();
+            try
+            {
+                if (dni != null)
+                {
+                    Inquilino i = dataInquilino.ObtenerPorDni(dni);
+                    IList<Contrato> c = dataContrato.AllByInquilino(i.Id);
+
+                    pc.Inquilino = i;
+                    pc.Contratos = c;
+                }
+
+                return Ok(pc); // { "Inquilino": { "Nombre":"Pepito", ... }, "Contratos":[{"IdINmueble": 8}, {}, {}] }
+            }
+            catch (Exception e)
+            {
+
+                throw e;
+            }
+
         }
 
         // POST: PagoController/Create
@@ -52,6 +90,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                     var res = dataPago.Alta(pago);
                     if (res > 0)
                     {
+                        
                         TempData["Message"] = "Pago Creado Correctamente";
                         return RedirectToAction(nameof(Index));
                     }
