@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace Avaca_Mario_Inmobiliaria.Controllers
 {
     public class ContratoController : Controller
@@ -18,6 +19,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         InquilinoData dataInquilino;
         public ContratoController(IConfiguration configuration)
         {
+
             this.configuration = configuration;
             dataContrato = new ContratoData(configuration);
             dataInmueble = new InmuebleData(configuration);

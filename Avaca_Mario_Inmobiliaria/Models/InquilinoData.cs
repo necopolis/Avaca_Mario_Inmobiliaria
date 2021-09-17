@@ -21,7 +21,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             int res = -1;
             using (SqlConnection conn= new SqlConnection(connectionString))
             {
-                string sql = @"INSERT INTO Inquilino (DNI, Nombre, Apellido, Telefono, Email, Activo)
+                string sql = @"INSERT INTO Inquilino (DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo, Activo)
                                 VALUES (@DNI, @Nombre, @Apellido, @Telefono, @Email, @Activo);
                                 SELECT SCOPE_IDENTITY();";
 
@@ -32,6 +32,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Apellido", inquilino.Apellido);
                     comm.Parameters.AddWithValue("@Telefono", inquilino.Telefono);
                     comm.Parameters.AddWithValue("@Email", inquilino.Email);
+                    comm.Parameters.AddWithValue("@LugarTrabajo", inquilino.LugarTrabajo);
                     comm.Parameters.AddWithValue("@Activo", 1);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteScalar());
@@ -49,7 +50,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             {
                 string sql = @"UPDATE Inquilino 
                                SET 
-                                DNI = @DNI, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email
+                                DNI = @DNI, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email, LugarTrabajo=@LugarTrabajo
                               WHERE
                                  Id = @Id";
 
@@ -60,6 +61,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Apellido", inquilino.Apellido);
                     comm.Parameters.AddWithValue("@Telefono", inquilino.Telefono);
                     comm.Parameters.AddWithValue("@Email", inquilino.Email);
+                    comm.Parameters.AddWithValue("@LugarTrabajo", inquilino.LugarTrabajo);
                     comm.Parameters.AddWithValue("@Id", id);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteNonQuery());
@@ -74,7 +76,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             Inquilino i = null;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email FROM Inquilino 
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo FROM Inquilino 
                                 WHERE Id=@id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -91,6 +93,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             Apellido = (string)reader[nameof(Inquilino.Apellido)],
                             Telefono = (string)reader[nameof(Inquilino.Telefono)],
                             Email = (string)reader[nameof(Inquilino.Email)],
+                            LugarTrabajo = (string)reader[nameof(Inquilino.LugarTrabajo)]
                         };
                     }
                     conn.Close();
@@ -126,7 +129,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             IList<Inquilino> res =new List<Inquilino>();
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, Activo
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo, Activo
                               FROM Inquilino";
 
                 using (SqlCommand comm = new SqlCommand(sql, conn))
@@ -143,6 +146,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             Apellido = (string)reader[nameof(Inquilino.Apellido)],
                             Telefono = (string)reader[nameof(Inquilino.Telefono)],
                             Email = (string)reader[nameof(Inquilino.Email)],
+                            LugarTrabajo = (string)reader[nameof(Inquilino.LugarTrabajo)],
                             Activo = (bool)reader[nameof(Inquilino.Activo)]
                         };
                         res.Add(i);
