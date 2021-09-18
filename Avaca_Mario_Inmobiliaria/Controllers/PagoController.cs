@@ -42,6 +42,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         public ActionResult Create(int id)
         {
             if (id > 0) { 
+
                 Contrato c = dataContrato.ObtenerPorId(id);
                 if (c.Id > 0) {
                     ViewBag.Contrato = c;
@@ -81,12 +82,29 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // POST: PagoController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Pago pago)
+        public ActionResult Create(int id, Pago pago)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
+                    //Viene por formulario
+                    if (id > 0 && pago.Id==0)
+                    {
+                        // Rescarta id del contrato y volver a chequear que realmente este vigente
+                        //var vigente = dataContrato.algo(id);
+                        // Si contrato esta vigente, Enviar p al repo.
+                        pago.Id = 0;
+                        pago.Id = id;
+                        //var res = data.Put(p);
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else {
+
+                        //var res= data.Put(p);
+                        return RedirectToAction(nameof(Index));
+
+                    }
                     var res = dataPago.Alta(pago);
                     if (res > 0)
                     {

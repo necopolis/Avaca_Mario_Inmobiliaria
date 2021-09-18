@@ -274,5 +274,24 @@ namespace Avaca_Mario_Inmobiliaria.Models
             return lista;
         }
 
+        public Boolean Check(int id) {
+            Boolean res= false;
+            using (SqlConnection conn = new SqlConnection(connectionString)) 
+            {
+                //
+                string sql = @"SELECT * FROM Contrato c WHERE c.Id=@id";
+                using (SqlCommand comm= new SqlCommand(sql, conn)) 
+                {
+                    comm.Parameters.AddWithValue("@id", id);
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+
+                    res = (reader.HasRows) ? true : false;
+                    //Revisar si el contrato esta vigente y cambiar res
+                }
+            }
+                return res;
+        }
+
     }
 }

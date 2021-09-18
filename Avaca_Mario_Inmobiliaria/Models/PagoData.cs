@@ -37,6 +37,29 @@ namespace Avaca_Mario_Inmobiliaria.Models
             return res;
 
         }
+
+        public int Put(Pago pago)
+        {
+            int res = -1;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"INSERT INTO Pago (NumeroPago, Importe, ContratoId)
+                                VALUES (@NumeroPago, @Importe, @ContratoId);
+                                SELECT SCOPE_IDENTITY();";
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@NumeroPago", pago.NumeroPago);
+                    comm.Parameters.AddWithValue("@Importe", pago.Importe);
+                    comm.Parameters.AddWithValue("@ContratoId", pago.ContratoId);
+                    conn.Open();
+                    res = Convert.ToInt32(comm.ExecuteScalar());
+                    conn.Close();
+                    pago.Id = res;
+                }
+            }
+            return res;
+
+        }
         public IList<Pago> ObtenerTodos()
         {
 

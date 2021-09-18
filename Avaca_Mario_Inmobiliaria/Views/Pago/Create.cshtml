@@ -13,7 +13,7 @@
     <div class="col-md-4">
         @if (c != null)
         {
-            <form action="/Pagos/Create/@c.Id" method="POST">
+            <form asp-action="Create" asp-route-id="@(c.Id)">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <h6>Pago para Contrato @(c.Id) para Inmueble ubicado en @(c.Inmueble.Direccion)</h6>
