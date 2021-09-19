@@ -15,6 +15,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
         [Display(Name = "Codigo de Pago")]
         public int NumeroPago { get; set; }
 
+
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyy}", ApplyFormatInEditMode = true)]
         [Display(Name = "Fecha de pago"), Required(ErrorMessage ="Campo solicitado")]
         public DateTime? FechaPago { get; set; }
 

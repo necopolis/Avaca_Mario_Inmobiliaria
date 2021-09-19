@@ -68,8 +68,12 @@ namespace Avaca_Mario_Inmobiliaria.Models
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string sql = @"SELECT p.Id, p.NumeroPago, p.FechaPago, p.Importe, p.ContratoId,
-                    c.FechaInicio, c.FechaFin 
-                    FROM Pago p INNER JOIN Contrato c ON p.ContratoId = c.Id";
+                    c.FechaInicio, c.FechaFin,
+                    m.Id,m.Direccion, m.Precio,
+                    inq.Id, inq.Nombre, inq.Apellido
+                    FROM Pago p INNER JOIN Contrato c ON p.ContratoId = c.Id
+                    INNER JOIN Inmueble m ON c.InmuebleId = m.Id
+                    INNER JOIN Inquilino inq ON c.InquilinoId = inq.Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     conn.Open();
@@ -88,6 +92,17 @@ namespace Avaca_Mario_Inmobiliaria.Models
                                 Id = reader.GetInt32(4),
                                 FechaInicio = reader.GetDateTime(5),
                                 FechaFin = reader.GetDateTime(6),
+                                Inquilino = new Inquilino {
+                                     Id= reader.GetInt32(10),
+                                     Nombre= reader.GetString(11),
+                                     Apellido= reader.GetString(12),
+
+                                },
+                                Inmueble = new Inmueble {
+                                    Id = reader.GetInt32(7),
+                                    Direccion= reader.GetString(8),
+                                    Precio= reader.GetDecimal(9)
+                                }
                             }
                         };
                         res.Add(pago);
@@ -98,6 +113,22 @@ namespace Avaca_Mario_Inmobiliaria.Models
             return res;
         }
         public int Baja(int id)
+        {
+            int res = -1;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = $"DELETE FROM Pago WHERE IdPago = @id";
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@Id", id);
+                    conn.Open();
+                    res = comm.ExecuteNonQuery();
+                    conn.Close();
+                }
+            }
+            return res;
+        }
+        public int Cancelar(int id)
         {
             int res = -1;
             using (SqlConnection conn = new SqlConnection(connectionString))
@@ -139,10 +170,13 @@ namespace Avaca_Mario_Inmobiliaria.Models
             Pago pago = null;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT p.Id, p.NumeroPago, p.FechaPago, p.Importe, p.ContratoId, 
-                        c.FechaInicio, c.FechaFin
-                        FROM Pago p INNER JOIN Contrato c ON p.ContratoId = c.Id
-                        WHERE i.Id=@Id";
+                string sql = @"SELECT p.Id, p.NumeroPago, p.FechaPago, p.Importe, p.ContratoId,
+                    c.FechaInicio, c.FechaFin,
+                    m.Id,m.Direccion, m.Precio,
+                    inq.Id, inq.Nombre, inq.Apellido
+                    FROM Pago p INNER JOIN Contrato c ON p.ContratoId = c.Id
+                    INNER JOIN Inmueble m ON c.InmuebleId = m.Id
+                    INNER JOIN Inquilino inq ON c.InquilinoId = inq.Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     comm.Parameters.AddWithValue("@Id", id);
@@ -162,6 +196,19 @@ namespace Avaca_Mario_Inmobiliaria.Models
                                 Id = reader.GetInt32(4),
                                 FechaInicio = reader.GetDateTime(5),
                                 FechaFin = reader.GetDateTime(6),
+                                Inquilino = new Inquilino
+                                {
+                                    Id = reader.GetInt32(10),
+                                    Nombre = reader.GetString(11),
+                                    Apellido = reader.GetString(12),
+
+                                },
+                                Inmueble = new Inmueble
+                                {
+                                    Id = reader.GetInt32(7),
+                                    Direccion = reader.GetString(8),
+                                    Precio = reader.GetDecimal(9)
+                                }
                             }
                         };
                     }

@@ -45,33 +45,36 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @if (ViewBag.Error != null)
-            {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>ERROR: </strong> @ViewBag.Error
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true"></span><i class="fas fa-times-circle"></i>
-                </button>
-            </div>
-            }
-        </main>
-    </div>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @if (ViewBag.Message != null)
-            {
+    @if (ViewBag.Error != null)
+    {
+        <div class="container">
+            <main role="main" class="pb-3">
+
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>ERROR: </strong> @ViewBag.Error
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true"></span><i class="fas fa-times-circle"></i>
+                    </button>
+                </div>
+
+            </main>
+        </div>
+    }
+    @if (ViewBag.Message != null)
+    {
+        <div class="container">
+            <main role="main" class="pb-3">
+
                 <div class="alert alert-info alert-dismissible fade show" role="alert">
                     <strong>Mensaje: </strong> @ViewBag.Message
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true"></span><i class="fas fa-times-circle"></i>
                     </button>
                 </div>
-            }
-        </main>
-    </div>
 
+            </main>
+        </div>
+    }
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -83,6 +86,13 @@
             &copy; 2021 - Inmobiliaria Avaca - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
         </div>
     </footer>
+    @{
+        <script type="text/javascript">
+            function confirmacion() {
+                return confirm("Esta seguro de eliminar");
+            }
+        </script>
+    }
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

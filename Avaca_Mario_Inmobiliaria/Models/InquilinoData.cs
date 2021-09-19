@@ -186,6 +186,40 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return res;
         }
+        public IList<Inquilino> ObtenerTodosActivos()
+        {
+            IList<Inquilino> res = new List<Inquilino>();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo, Activo
+                              FROM Inquilino 
+                                WHERE Activo=1";
+
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        var i = new Inquilino
+                        {
+                            Id = reader.GetInt32(0),
+                            DNI = (string)reader[nameof(Inquilino.DNI)],
+                            Nombre = (string)reader[nameof(Inquilino.Nombre)],
+                            Apellido = (string)reader[nameof(Inquilino.Apellido)],
+                            Telefono = (string)reader[nameof(Inquilino.Telefono)],
+                            Email = (string)reader[nameof(Inquilino.Email)],
+                            LugarTrabajo = (string)reader[nameof(Inquilino.LugarTrabajo)],
+                            Activo = (bool)reader[nameof(Inquilino.Activo)]
+                        };
+                        res.Add(i);
+                    }
+                    conn.Close();
+                }
+            }
+            return res;
+        }
+
 
     }
 }

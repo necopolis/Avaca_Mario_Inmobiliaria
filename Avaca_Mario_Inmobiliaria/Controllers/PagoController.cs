@@ -83,7 +83,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(int id, Pago pago)
-        {
+        {  // id viene por ruta pago viene 
             try
             {
                 if (ModelState.IsValid)
@@ -94,29 +94,33 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                         // Rescarta id del contrato y volver a chequear que realmente este vigente
                         //var vigente = dataContrato.algo(id);
                         // Si contrato esta vigente, Enviar p al repo.
+                        // Armo el pago y consultao si el contrato es valido
                         pago.Id = 0;
                         pago.Id = id;
-                        //var res = data.Put(p);
-                        return RedirectToAction(nameof(Index));
+                     }
+                    Contrato c = dataContrato.ObtenerPorId(pago.ContratoId);
+                    if (c.Activo)
+                    {
+                        //var res = repo.Put(pago);
+
+                        var res = dataPago.Put(pago);
+                        if (res > 0)
+                        {
+
+                            TempData["Message"] = "Pago Creado Correctamente";
+                            return RedirectToAction(nameof(Index));
+                        }
+                        else
+                        {
+                            ViewBag.Error = @"No se ha podido Agregar el Pago 
+                                                Intentelo mas tarde o realice el reclamo a servicio tecnico";
+                            return View();
+                        }
                     }
                     else {
 
-                        //var res= data.Put(p);
-                        return RedirectToAction(nameof(Index));
-
-                    }
-                    var res = dataPago.Alta(pago);
-                    if (res > 0)
-                    {
-                        
-                        TempData["Message"] = "Pago Creado Correctamente";
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        ViewBag.Error = @"No se ha podido Agregar el Pago 
-                                        Intentelo mas tarde o realice el reclamo a servicio tecnico";
-                        return View();
+                        TempData["Message"]= "El contrato indicado no esta vigente";
+                        return RedirectToAction();
                     }
                 }
                 else
@@ -138,20 +142,42 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: PagoController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            var res = dataPago.ObtenerPorId(id);
+            ViewBag.Id = res.Id;
+            return View(res);
+
         }
 
         // POST: PagoController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Pago pago)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+
+                if (ModelState.IsValid)
+                {
+                    var res = dataPago.Modificacion(pago);
+                    if (res > 0)
+                    {
+                        TempData["Message"] = "Pago editado con exito";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    TempData["Message"] = "Error en guardar en la base de datos el pago, vuelva a intentar";
+                    return View(nameof(Index), new { pago=pago});
+
+                }
+                else {
+                    ViewBag.Message = "Ha querido ingresar valores no aceptados, vuelva a ingresar";
+                    return View();
+                }
+                
             }
             catch
             {
+                TempData["Message"] = "Error grave comuniquese con el servicio tecnico";
                 return View();
             }
         }
@@ -159,17 +185,28 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: PagoController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var res = dataPago.ObtenerPorId(id);
+            return View(res);
         }
 
         // POST: PagoController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Pago pago)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                var res = dataPago.Baja(id);
+                if (res>0) {
+                    TempData["Message"] = "Pago eliminado con exito";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    TempData["Error"] = "Pago eliminado sin exito";
+                    return RedirectToAction(nameof(Index));
+                }
+                
             }
             catch
             {
