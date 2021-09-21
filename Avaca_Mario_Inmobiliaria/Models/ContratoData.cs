@@ -378,22 +378,24 @@ namespace Avaca_Mario_Inmobiliaria.Models
         }
         public bool fechasCorrectas(int id, DateTime desde, DateTime hasta) 
         {
-            bool res = false;
+            bool res = true;
 
             using (SqlConnection conn = new SqlConnection(connectionString)) 
             {
-                string sql = @"SELECT c.Id FROM Contrato c
+                string sql = @"SELECT c.* FROM Contrato c
                                 WHERE (c.FechaInicio BETWEEN @desde AND @hasta
                                 OR c.FechaFin BETWEEN @desde AND @hasta)
-                                AND c.Activo =1 AND c.InmuebleId = @id";
+                                AND c.Activo =1 AND c.InmuebleId = @Id";
                 using (SqlCommand comm=new SqlCommand(sql, conn)) 
                 {
                     comm.Parameters.AddWithValue("@desde", desde);
                     comm.Parameters.AddWithValue("@hasta", hasta);
-                    comm.Parameters.AddWithValue("@id", id);
+                    comm.Parameters.AddWithValue("@Id", id);
                     conn.Open();
                     var reader = comm.ExecuteReader();
-                    res = reader.Read();
+                    if (reader.Read()) {
+                        res = false;
+                    }
                 }
             }
             return res;

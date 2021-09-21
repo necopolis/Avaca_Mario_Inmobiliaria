@@ -57,11 +57,15 @@ namespace Avaca_Mario_Inmobiliaria
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute(
+                    name:"login", 
+                    pattern: "entrar/{**accion}", new { controller = "Usuario", action = "Login" });
+                
                 endpoints.MapControllerRoute(
                     name: "SearchInquilinoContratos",
                     pattern: "Pago/Inquilino/{dni}", new { controller = "Pago", action = "Inquilino" });

@@ -97,6 +97,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                     }
                     dataUsuario.Modificacion(u);
                 }
+                TempData["Message"] = "Usuario creado con exito";
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -242,6 +243,9 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: Usuarios/Login/
         public ActionResult Login(string returnUrl)
         {
+            if (User.Identity.IsAuthenticated) {
+                return RedirectToAction("Index", "Home");
+            }
             TempData["returnUrl"] = returnUrl;
             return View();
         }
@@ -287,7 +291,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                         CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(claimsIdentity));
                     TempData.Remove("returnUrl");
-                    return Redirect(HttpContext.Request.Headers["referer"].FirstOrDefault());
+                    return Redirect(returnUrl);
                 }
                 TempData["returnUrl"] = returnUrl;
                 return View();

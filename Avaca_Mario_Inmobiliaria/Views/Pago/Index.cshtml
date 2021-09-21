@@ -1,20 +1,17 @@
 ﻿@model IEnumerable<Avaca_Mario_Inmobiliaria.Models.Pago>
 
 @{
-    ViewData["Title"] = "Pagos";
+    ViewData["Title"] = "Lista Pagos";
 }
 
 <h1>Lista de Pagos</h1>
 
 <p>
-    <a asp-action="Create">Crear nuevo</a>
+    <a asp-action="Create">Crear Pago</a>
 </p>
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
             <th>
                 @Html.DisplayNameFor(model => model.NumeroPago)
             </th>
@@ -42,9 +39,6 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.NumeroPago)
                 </td>

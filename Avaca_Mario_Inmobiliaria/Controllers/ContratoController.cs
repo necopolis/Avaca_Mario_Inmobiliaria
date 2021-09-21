@@ -58,7 +58,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         public ActionResult Create()
         {
             ViewBag.Inmuebles =dataInmueble.ObtenerTodosValidos();
-            ViewBag.Garantes = dataGarante.ObtenerTodos();
+            ViewBag.Garantes = dataGarante.ObtenerTodosActivos();
             ViewBag.Inquilinos = dataInquilino.ObtenerTodosActivos();
             return View();
         }

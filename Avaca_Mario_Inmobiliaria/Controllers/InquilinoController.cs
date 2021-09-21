@@ -135,6 +135,8 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             int res = data.Baja(id);
             if (res > 0)
             {
+
+                TempData["Message"] = @"Inquilino Eliminado correctamente";
                 return RedirectToAction(nameof(Index));
             }
             else

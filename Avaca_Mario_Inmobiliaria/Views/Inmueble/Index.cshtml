@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<Avaca_Mario_Inmobiliaria.Models.Inmueble>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Lista Inmuebles";
 }
 
 <h1>Lista de Inmuebles</h1>
 
 <p>
-    <a asp-action="Create">Crear Nuevo Inmueble</a>
+    <a asp-action="Create">Crear Inmueble</a>
 </p>
 <table class="table">
     <thead>
@@ -69,7 +69,9 @@
             <td>
                 @Html.ActionLink("Editar", "Edit", new { id = item.Id }) |
                 @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Elimiar", "Delete", new { id = item.Id })
+                @if (item.Activo)
+                {@Html.ActionLink("Eliminar", "Delete", new { id = item.Id });
+            }
             </td>
         </tr>
 }
