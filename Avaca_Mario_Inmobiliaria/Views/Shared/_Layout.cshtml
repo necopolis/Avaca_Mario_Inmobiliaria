@@ -12,36 +12,64 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Inmobiliaria Avaca</a>
+                @*<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Inmobiliaria Avaca</a>*@
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="btn btn-info mx-1 nav-link text-dark" asp-area="" asp-controller="Inquilino" asp-action="Index">Inquilinos <i class="fas fa-house-user"></i></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-info mx-1 nav-link text-dark" asp-area="" asp-controller="Propietario" asp-action="Index">Propietarios<i class="fas fa-user-tie"></i></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-info mx-1 nav-link text-dark" asp-area="" asp-controller="Inmueble" asp-action="Index">Inmuebles <i class="fas fa-building"></i></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Garante" asp-action="Index">Garantes <i class="fas fa-user-check"></i></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Contrato" asp-action="Index">Contratos <i class="fas fa-file-signature"></i></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Pago" asp-action="Index">Pago <i class="fas fa-file-signature"></i></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad <i class="fas fa-user-shield"></i></a>
-                        </li>
-                    </ul>
-                </div>
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <a class="py-2 align-bottom align-content-center" asp-controller="Home" asp-action="Index"><span class="lnr lnr-home"></span> Inicio</a>
+                    <a class="py-2 d-none d-md-inline-block float-right" href="@Url.Link("login", null)"><span class="lnr lnr-enter"></span> Acceder</a>
+                }
+                else
+                {
+
+                    <a class="btn btn-primary  text-light" asp-controller="Home" asp-action="Index">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+
+                    @if (User.IsInRole("Administrador") || User.IsInRole("SuperAdministrador"))
+                    {
+                        <a class="btn btn-info mx-1 nav-link text-dark" asp-controller="Usuario" asp-action="Index">Usuario <i class="fas fa-house-user"></i></a>
+                    }
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="btn btn-info mx-1 nav-link text-dark" asp-area="" asp-controller="Inquilino" asp-action="Index">Inquilinos <i class="fas fa-house-user"></i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-info mx-1 nav-link text-dark" asp-area="" asp-controller="Propietario" asp-action="Index">Propietarios<i class="fas fa-user-tie"></i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-info mx-1 nav-link text-dark" asp-area="" asp-controller="Inmueble" asp-action="Index">Inmuebles <i class="fas fa-building"></i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Garante" asp-action="Index">Garantes <i class="fas fa-user-check"></i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Contrato" asp-action="Index">Contratos <i class="fas fa-file-signature"></i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Pago" asp-action="Index">Pago <i class="fas fa-file-signature"></i></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad <i class="fas fa-user-shield"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="dropdown">
+                        <a class="btn btn-primary dropdown-toggle text-light" href="#" role="button" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent" data-display="static">
+                            <span class="lnr lnr-user"></span> @User.Identity.Name
+                        </a>
+
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item text-dark" asp-controller="Usuario" asp-action="Perfil"><i class="lnr lnr-user"></i> Perfil</a>
+                            <a class="dropdown-item text-dark" asp-controller="Usuario" asp-action="Logout"><i class="lnr lnr-exit"></i> Salir</a>
+                        </div>
+                    </div>
+                }
+
             </div>
         </nav>
     </header>

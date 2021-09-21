@@ -135,7 +135,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     var reader = comm.ExecuteReader();
                     while (reader.Read())
                     {
-                        var i = new Propietario
+                        Propietario p = new Propietario
                         {
                             Id = reader.GetInt32(0),
                             DNI = (string)reader[nameof(Propietario.DNI)],
@@ -145,7 +145,39 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             Email = (string)reader[nameof(Propietario.Email)],
                             Activo = (bool)reader[nameof(Propietario.Activo)]
                         };
-                        res.Add(i);
+                        res.Add(p);
+                    }
+                    conn.Close();
+                }
+            }
+            return res;
+        }
+        public IList<Propietario> ObtenerTodosActivos()
+        {
+            IList<Propietario> res = new List<Propietario>();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, Activo
+                              FROM Propietario
+                              WHERE Activo=1";
+
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Propietario p = new Propietario
+                        {
+                            Id = reader.GetInt32(0),
+                            DNI = (string)reader[nameof(Propietario.DNI)],
+                            Nombre = (string)reader[nameof(Propietario.Nombre)],
+                            Apellido = (string)reader[nameof(Propietario.Apellido)],
+                            Telefono = (string)reader[nameof(Propietario.Telefono)],
+                            Email = (string)reader[nameof(Propietario.Email)],
+                            Activo = (bool)reader[nameof(Propietario.Activo)]
+                        };
+                        res.Add(p);
                     }
                     conn.Close();
                 }

@@ -8,7 +8,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
 {
     public class Propietario
     {
-        [Display(Name = "Código")]
+        [Display(Name = "Código"), Required(ErrorMessage ="Este campo es Obligatorio")]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Este campo es Obligatorio."), RegularExpression("[0-9]{8,10}", ErrorMessage ="Solo numeros y hasta 10 digitos")]

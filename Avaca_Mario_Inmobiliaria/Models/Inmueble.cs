@@ -23,7 +23,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
         [Display(Name = "Ambientes"), Required(ErrorMessage = "Este campo es Obligatorio.")]
         public int CantAmbiente { get; set; }
 
-        [Range(0, double.MinValue, ErrorMessage = "Ingrese un numero con decimal")]
+        [Required(ErrorMessage = "Ingrese un numero con decimal")]
         public decimal Precio { get; set; }
         
         public bool Activo { get; set; }

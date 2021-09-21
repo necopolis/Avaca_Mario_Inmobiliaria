@@ -1,7 +1,7 @@
 ﻿@model Avaca_Mario_Inmobiliaria.Models.Inquilino
 
 @{
-    ViewData["Title"] = "Editar";
+    ViewData["Title"] = "Editar Inquilino";
 }
 
 <h1>Editando</h1>
@@ -38,14 +38,22 @@
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                        <label asp-for="LugarTrabajo" class="control-label"></label>
-                        <input asp-for="LugarTrabajo" class="form-control" />
-                        <span asp-validation-for="LugarTrabajo" class="text-danger"></span>
+                <label asp-for="LugarTrabajo" class="control-label"></label>
+                <input asp-for="LugarTrabajo" class="form-control" />
+                <span asp-validation-for="LugarTrabajo" class="text-danger"></span>
             </div>
-                    <div class="form-group">
-                        <input type="submit" value="Guardar" class="btn btn-primary" />
-                    </div>
-                </form>
+            @if (User.IsInRole("Administrador"))
+            {
+            <div class="form-group">
+                <label asp-for="Activo" class="control-label"></label>
+                <input asp-for="Activo" class="form-control" />
+                <span asp-validation-for="Activo" class="text-danger"></span>
+            </div>
+            }
+            <div class="form-group">
+                <input type="submit" value="Guardar" class="btn btn-primary" />
+            </div>
+        </form>
             </div>
         </div>
 

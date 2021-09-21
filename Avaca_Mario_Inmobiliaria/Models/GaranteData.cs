@@ -160,6 +160,40 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return res;
         }
+        public IList<Garante> ObtenerTodosActivos()
+        {
+            IList<Garante> res = new List<Garante>();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo, Sueldo, Activo
+                              FROM Garante
+                              WHERE Activo=1";
+
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        var i = new Garante
+                        {
+                            Id = reader.GetInt32(0),
+                            DNI = (string)reader[nameof(Garante.DNI)],
+                            Nombre = (string)reader[nameof(Garante.Nombre)],
+                            Apellido = (string)reader[nameof(Garante.Apellido)],
+                            Telefono = (string)reader[nameof(Garante.Telefono)],
+                            Email = (string)reader[nameof(Garante.Email)],
+                            LugarTrabajo = (string)reader[nameof(Garante.LugarTrabajo)],
+                            Sueldo = (decimal)reader[nameof(Garante.Sueldo)],
+                            Activo = (bool)reader[nameof(Garante.Activo)]
+                        };
+                        res.Add(i);
+                    }
+                    conn.Close();
+                }
+            }
+            return res;
+        }
 
     }
 }

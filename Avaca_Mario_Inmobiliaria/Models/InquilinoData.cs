@@ -22,7 +22,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             using (SqlConnection conn= new SqlConnection(connectionString))
             {
                 string sql = @"INSERT INTO Inquilino (DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo, Activo)
-                                VALUES (@DNI, @Nombre, @Apellido, @Telefono, @Email, @Activo);
+                                VALUES (@DNI, @Nombre, @Apellido, @Telefono, @Email, @LugarTrabajo, @Activo);
                                 SELECT SCOPE_IDENTITY();";
 
                 using (SqlCommand comm  = new SqlCommand(sql, conn))
@@ -50,7 +50,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             {
                 string sql = @"UPDATE Inquilino 
                                SET 
-                                DNI = @DNI, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email, LugarTrabajo=@LugarTrabajo
+                                DNI = @DNI, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email, LugarTrabajo=@LugarTrabajo, Activo=@Activo
                               WHERE
                                  Id = @Id";
 
@@ -62,6 +62,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Telefono", inquilino.Telefono);
                     comm.Parameters.AddWithValue("@Email", inquilino.Email);
                     comm.Parameters.AddWithValue("@LugarTrabajo", inquilino.LugarTrabajo);
+                    comm.Parameters.AddWithValue("@Activo", inquilino.Activo);
                     comm.Parameters.AddWithValue("@Id", id);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteNonQuery());

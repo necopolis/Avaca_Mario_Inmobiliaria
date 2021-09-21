@@ -12,18 +12,18 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
     public class InmuebleController : Controller
     {
         protected readonly IConfiguration configuration;
-        InmuebleData data;
+        InmuebleData dataInm;
         PropietarioData dataProp;
         public InmuebleController(IConfiguration configuration)
         {
             this.configuration = configuration;
-            data = new InmuebleData(configuration);
+            dataInm = new InmuebleData(configuration);
             dataProp = new PropietarioData(configuration);
         }
         // GET: InmuebleController
         public ActionResult Index()
         {
-            var lista = data.ObtenerTodos();
+            var lista = dataInm.ObtenerTodos();
             if (TempData.ContainsKey("Message") || TempData.ContainsKey("Error"))
             {
                 ViewBag.Message = TempData["Message"];
@@ -35,14 +35,14 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: InmuebleController/Details/5
         public ActionResult Details(int id)
         {
-            var entidad = data.ObtenerPorId(id);
+            var entidad = dataInm.ObtenerPorId(id);
             return View(entidad);
         }
 
         // GET: InmuebleController/Create
         public ActionResult Create()
         {
-            ViewBag.Propietarios = dataProp.ObtenerTodos();
+            ViewBag.Propietarios = dataProp.ObtenerTodosActivos();
             return View();
         }
 
@@ -55,7 +55,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var res = data.Alta(inmueble);
+                    var res = dataInm.Alta(inmueble);
                     if (res > 0)
                     {
                         TempData["Message"] = "Inmueble Creado Correctamente";
@@ -88,7 +88,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: InmuebleController/Edit/5
         public ActionResult Edit(int id)
         {
-            var res = data.ObtenerPorId(id);
+            var res = dataInm.ObtenerPorId(id);
             ViewBag.Propietarios = dataProp.ObtenerTodos();
             return View(res);
         }
@@ -102,7 +102,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var res = data.Modificacion(inmueble);
+                    var res = dataInm.Modificacion(inmueble);
                     if (res > 0)
                     {
                         TempData["Message"] = "Inmueble Creado Correctamente";
@@ -136,7 +136,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: InmuebleController/Delete/5
         public ActionResult Delete(int id)
         {
-            var res = data.ObtenerPorId(id);
+            var res = dataInm.ObtenerPorId(id);
             return View(res);
         }
 
@@ -147,7 +147,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         {
             try
             {
-                data.Baja(id);
+                dataInm.Baja(id);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

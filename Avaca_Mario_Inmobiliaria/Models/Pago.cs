@@ -13,7 +13,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
         public int Id { get; set; }
 
         [Display(Name = "Codigo de Pago")]
-        public int NumeroPago { get; set; }
+        public Guid NumeroPago { get; set; }
 
 
         [DisplayFormat(DataFormatString = "{0:dd-MM-yyy}", ApplyFormatInEditMode = true)]

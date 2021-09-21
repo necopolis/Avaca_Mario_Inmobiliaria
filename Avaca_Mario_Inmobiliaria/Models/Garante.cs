@@ -31,7 +31,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
         [Display(Name ="Lugar de Trabajo"),Required]
         public string LugarTrabajo { get; set; }
 
-        [Display(Prompt = "Monto del Recibo de Sueldo", Name ="Recibo de Sueldo"), RegularExpression("[0-9]{2}", ErrorMessage = "Solo numeros")]
+        [Display(Prompt = "300000", Name ="Recibo de Sueldo"), Required(ErrorMessage ="Este campo es Obligatorio")]
         public decimal Sueldo { get; set; }
 
         public bool Activo { get; set; }

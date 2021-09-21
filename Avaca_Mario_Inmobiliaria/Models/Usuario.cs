@@ -29,6 +29,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
 		public string Email { get; set; }
 		[Required, DataType(DataType.Password)]
 		public string Clave { get; set; }
+		
+		[Display(Name ="Foto de Perfil")]
 		public string Avatar { get; set; }
 		[NotMapped]//Para EF
 		public IFormFile AvatarFile { get; set; }

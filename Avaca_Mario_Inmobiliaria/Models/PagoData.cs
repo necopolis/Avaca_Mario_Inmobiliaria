@@ -25,7 +25,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                                 SELECT SCOPE_IDENTITY();";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
-                    comm.Parameters.AddWithValue("@NumeroPago", pago.NumeroPago);
+                    comm.Parameters.AddWithValue("@NumeroPago", Guid.NewGuid());
                     comm.Parameters.AddWithValue("@Importe", pago.Importe);
                     comm.Parameters.AddWithValue("@ContratoId", pago.ContratoId);
                     conn.Open();
@@ -48,7 +48,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                                 SELECT SCOPE_IDENTITY();";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
-                    comm.Parameters.AddWithValue("@NumeroPago", pago.NumeroPago);
+                    comm.Parameters.AddWithValue("@NumeroPago", Guid.NewGuid());
                     comm.Parameters.AddWithValue("@Importe", pago.Importe);
                     comm.Parameters.AddWithValue("@ContratoId", pago.ContratoId);
                     conn.Open();
@@ -83,7 +83,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                         Pago pago = new Pago
                         {
                             Id = reader.GetInt32(0),
-                            NumeroPago = reader.GetInt32(1),
+                            NumeroPago = reader.GetGuid(1),
                             FechaPago = reader.GetDateTime(2),
                             Importe = reader.GetDecimal(3),
                             ContratoId = reader.GetInt32(4),
@@ -150,14 +150,14 @@ namespace Avaca_Mario_Inmobiliaria.Models
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string sql = @"UPDATE Pago SET
-                    NumeroPago=@NumeroPago, FechaPago=@FechaPago, Importe=@Importe, CantAmbiente=@CantAmbiente, Precio=@Precio, ContratoId=@ContratoId " +
-                    "WHERE Id = @Id";
+                            FechaPago=@FechaPago, Importe=@Importe, ContratoId=@ContratoId
+                            WHERE Id = @Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
-                    comm.Parameters.AddWithValue("@NumeroPago", pago.NumeroPago);
                     comm.Parameters.AddWithValue("@FechaPago", pago.FechaPago);
                     comm.Parameters.AddWithValue("@Importe", pago.Importe);
                     comm.Parameters.AddWithValue("@ContratoId", pago.ContratoId);
+                    comm.Parameters.AddWithValue("@Id", pago.Id);
                     conn.Open();
                     res = comm.ExecuteNonQuery();
                     conn.Close();
@@ -187,7 +187,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                         pago = new Pago
                         {
                             Id = reader.GetInt32(0),
-                            NumeroPago = reader.GetInt32(1),
+                            NumeroPago = reader.GetGuid(1),
                             FechaPago = reader.GetDateTime(2),
                             Importe = reader.GetDecimal(3),
                             ContratoId = reader.GetInt32(4),
