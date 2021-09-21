@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace Avaca_Mario_Inmobiliaria.Controllers
 {
     public class ContratoController : Controller
@@ -18,6 +19,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         InquilinoData dataInquilino;
         public ContratoController(IConfiguration configuration)
         {
+
             this.configuration = configuration;
             dataContrato = new ContratoData(configuration);
             dataInmueble = new InmuebleData(configuration);
@@ -55,9 +57,9 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: ContratoController/Create
         public ActionResult Create()
         {
-            ViewBag.Inmuebles =dataInmueble.ObtenerTodos();
+            ViewBag.Inmuebles =dataInmueble.ObtenerTodosValidos();
             ViewBag.Garantes = dataGarante.ObtenerTodos();
-            ViewBag.Inquilinos = dataInquilino.ObtenerTodos();
+            ViewBag.Inquilinos = dataInquilino.ObtenerTodosActivos();
             return View();
         }
 
@@ -70,16 +72,34 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var res = dataContrato.Alta(contrato);
-                    if (res > 0)
-                    {
-                        TempData["Message"] = "Contrato Creado Correctamente";
-                        return RedirectToAction(nameof(Index));
+                    var fechasCorrectas = dataContrato.fechasCorrectas(contrato.InmuebleId, contrato.FechaInicio, contrato.FechaFin);
+                    var inmuebleleIsOk = dataInmueble.InmubleHabilitado(contrato.InmuebleId);
+                    var inquilinoIsOk = dataInquilino.ObtenerPorId(contrato.InquilinoId).Id > 0 ? true : false;
+
+                    if (fechasCorrectas) {
+
+                        if (inmuebleleIsOk && inquilinoIsOk && fechasCorrectas)
+                        {
+                            var res = dataContrato.Alta(contrato);
+                            if (res > 0)
+                            {
+                                TempData["Message"] = "Contrato Creado Correctamente";
+                                return RedirectToAction(nameof(Index));
+                            }
+                            else
+                            {
+                                ViewBag.Error = "No se ha podido cargar el contrato, intente nuevamente";
+                                return RedirectToAction(nameof(Create));
+                            }
+                        }
+                        else {
+
+                            return View();
+                        }
                     }
-                    else
-                    {
-                        ViewBag.Error = "No se ha podido cargar el contrato, intente nuevamente";
-                        return RedirectToAction(nameof(Index));
+                    else {
+                        TempData["Error"] = "En las fecha que desea alquilar no se puede, busque otras";
+                        return RedirectToAction(nameof(Create));
                     }
                 }
                 else
@@ -91,7 +111,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Error"] = @"No se ha podido Agregar el Inquilino, 
+                TempData["Error"] = @"No se ha podido Agregar el Contrato, 
                                 se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
                 return RedirectToAction(nameof(Index));
                 //throw;
@@ -181,5 +201,8 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 //return Json(new { Error = ex.Message });
             }
         }
+
+        
+
     }
 }

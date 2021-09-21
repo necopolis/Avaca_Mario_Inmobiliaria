@@ -158,5 +158,85 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return inmueble;
         }
+
+        public IList<Inmueble> ObtenerTodosValidos()
+        {
+            IList<Inmueble> res = new List<Inmueble>();
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT i.Id, i.Direccion, i.Tipo, i.Uso, i.CantAmbiente, i.Precio,
+				            i.Activo, i.PropietarioId, p.Nombre, p.DNI, p.Email  
+                            FROM Inmueble i
+                            INNER JOIN Propietario p ON i.PropietarioId = p.Id
+                            WHERE i.Activo = 1
+                            AND i.Id NOT IN (
+	                            SELECT DISTINCT c.InmuebleId
+	                            FROM Contrato c
+	                            WHERE c.Activo = 1
+	                            AND getdate() BETWEEN c.FechaInicio AND c.FechaFin
+                            );";
+
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        var i = new Inmueble
+                        {
+                            Id = reader.GetInt32(0),
+                            Direccion = reader.GetString(1),
+                            Tipo = reader.GetString(2),
+                            Uso = reader.GetString(3),
+                            CantAmbiente = reader.GetInt32(4),
+                            Precio = reader.GetDecimal(5),
+                            Activo = reader.GetBoolean(6),
+                            PropietarioId = reader.GetInt32(7),
+                        };
+
+                        var p = new Propietario
+                        {
+                            Id = reader.GetInt32(7),
+                            Nombre = reader.GetString(8),
+                            DNI = reader.GetString(9),
+                            Email = reader.GetString(10),
+                        };
+
+                        i.Duenio = p;
+
+                        res.Add(i);
+                    }
+                    conn.Close();
+                }
+            }
+            return res;
+        }
+        public bool InmubleHabilitado(int id)
+        {
+            bool res = false;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT i.Id
+                        FROM Inmueble i
+                        WHERE i.Activo = 1
+                        AND i.id NOT IN (
+	                        SELECT DISTINCT c.InmuebleId
+	                        FROM Contrato c
+	                        WHERE c.Activo = 1
+	                        AND getdate() BETWEEN c.FechaInicio AND c.FechaFin
+                        ) 
+                        AND i.Id=@id;";
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@Id", id);
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    res = reader.Read();
+                    conn.Close();
+                }
+            }
+            
+            return res;
+        }
     }
 }

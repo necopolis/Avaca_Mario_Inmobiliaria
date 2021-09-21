@@ -1,7 +1,7 @@
 ﻿@model Avaca_Mario_Inmobiliaria.Models.Propietario
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Eliminar";
 }
 
 <h1>Eliminar</h1>
@@ -49,7 +49,7 @@
         </dd>
     </dl>
     
-    <form asp-action="Delete">
+    <form asp-action="Delete" onsubmit="return confirmacion()">
         <input type="submit" value="Eliminar" class="btn btn-danger" /> |
         <a asp-action="Index">Regresar a la Lista</a>
     </form>

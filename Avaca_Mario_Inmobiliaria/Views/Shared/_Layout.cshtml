@@ -20,58 +20,61 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                            <a class="btn btn-info mx-1 nav-link text-dark" asp-area="" asp-controller="Inquilino" asp-action="Index">Inquilinos <i class="fas fa-house-user"></i></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Inquilino" asp-action="Index">Inquilinos <i class="fas fa-house-user"></i></a>
+                            <a class="btn btn-info mx-1 nav-link text-dark" asp-area="" asp-controller="Propietario" asp-action="Index">Propietarios<i class="fas fa-user-tie"></i></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Propietario" asp-action="Index">Propietarios<i class="fas fa-user-tie"></i></a>
+                            <a class="btn btn-info mx-1 nav-link text-dark" asp-area="" asp-controller="Inmueble" asp-action="Index">Inmuebles <i class="fas fa-building"></i></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Inmueble" asp-action="Index">Inmuebles <i class="fas fa-building"></i></a>
+                            <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Garante" asp-action="Index">Garantes <i class="fas fa-user-check"></i></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Garante" asp-action="Index">Garantes <i class="fas fa-user-check"></i></a>
+                            <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Contrato" asp-action="Index">Contratos <i class="fas fa-file-signature"></i></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Contrato" asp-action="Index">Contratos <i class="fas fa-file-signature"></i></a>
+                            <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Pago" asp-action="Index">Pago <i class="fas fa-file-signature"></i></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad <i class="fas fa-user-shield"></i></a>
+                            <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad <i class="fas fa-user-shield"></i></a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @if (ViewBag.Error != null)
-            {
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>ERROR: </strong> @ViewBag.Error
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true"></span><i class="fas fa-times-circle"></i>
-                </button>
-            </div>
-            }
-        </main>
-    </div>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @if (ViewBag.Message != null)
-            {
+    @if (ViewBag.Error != null)
+    {
+        <div class="container">
+            <main role="main" class="pb-3">
+
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>ERROR: </strong> @ViewBag.Error
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true"></span><i class="fas fa-times-circle"></i>
+                    </button>
+                </div>
+
+            </main>
+        </div>
+    }
+    @if (ViewBag.Message != null)
+    {
+        <div class="container">
+            <main role="main" class="pb-3">
+
                 <div class="alert alert-info alert-dismissible fade show" role="alert">
                     <strong>Mensaje: </strong> @ViewBag.Message
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true"></span><i class="fas fa-times-circle"></i>
                     </button>
                 </div>
-            }
-        </main>
-    </div>
 
+            </main>
+        </div>
+    }
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -83,6 +86,13 @@
             &copy; 2021 - Inmobiliaria Avaca - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
         </div>
     </footer>
+    @{
+        <script type="text/javascript">
+            function confirmacion() {
+                return confirm("Esta seguro de eliminar");
+            }
+        </script>
+    }
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
