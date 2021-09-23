@@ -76,6 +76,11 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             }
             catch (Exception ex)
             {
+                if (ex.HResult== -2146232060)
+                {
+                    TempData["Error"] = @"Esta queriendo agregar un documento duplicado";
+                    return RedirectToAction(nameof(Index));
+                }
                 TempData["Error"] = @"No se ha podido Agregar el Inquilino, 
                                 se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
                 return RedirectToAction(nameof(Index));
@@ -131,18 +136,30 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         }
         public ActionResult Delete(int id)
         {
+            try
+            {
+                var res = data.ObtenerPorId(id);
+                if (res != null)
+                {
+                    return View(res);
+                    //TempData["Message"] = @"Inquilino Eliminado correctamente";
+                    //return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    // Control por si cliente toca
+                    TempData["Error"] = @"Inquilino a borrar no existe";
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (Exception e)
+            {
+                TempData["Error"] = @"Error grave comuniquese con servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+            }
             /* Volver a verlo */
-            int res = data.Baja(id);
-            if (res > 0)
-            {
-
-                TempData["Message"] = @"Inquilino Eliminado correctamente";
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                return RedirectToAction(nameof(Index));
-            }
+            
         }
 
         // POST: InquilinoController/Delete/5
@@ -150,10 +167,33 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, Inquilino inqui)
         {
+            bool admin = false;
+            var NotContrato = false;
             try
             {
-                /* aca las elimino y listo*/
+                
+                if (User.IsInRole("Administrador") )
+                {
+                    NotContrato = data.NoTieneContrato(id);
+                    admin = true;
+                }
+                if(NotContrato)
+                {
+                    TempData["Error"] = @"Inquilino que quiere eliminar tiene contratos";
+                    return RedirectToAction(nameof(Index));
+                }
+                var res = data.Baja(id, admin);
+                if (res>0)
+                {
+                    TempData["Message"]=@"Inquilino eliminado correctamente";
+                    return RedirectToAction(nameof(Index));
+                }
+                
+                TempData["Error"] = @"No se ha podido eliminar el inquilino, intente nuevamente";
                 return RedirectToAction(nameof(Index));
+
+                /* aca las elimino y listo*/
+
             }
             catch (Exception ex)
             {

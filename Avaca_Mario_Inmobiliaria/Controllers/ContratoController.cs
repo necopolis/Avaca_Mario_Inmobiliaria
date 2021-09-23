@@ -138,6 +138,12 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    var fecha = dataContrato.fechasCorrectas(contrato.InmuebleId, contrato.FechaInicio, contrato.FechaFin, contrato.Id);
+                    if (!fecha)
+                    {
+                        ViewBag.Error =@"La fecha que a seleccionado se pisan con otros contrato, verifique nuevamente";
+                        return View();
+                    }
                     var res = dataContrato.Modificacion(contrato);
                     if (res > 0)
                     {

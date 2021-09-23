@@ -120,6 +120,56 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return res;
         }
+        public int Baja(int id, bool admin)
+        {
+            int res = -1;
+            string sql;
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                if (admin)
+                {
+                    sql = @"DELETE FROM Propietario WHERE Id=@Id";
+                }
+                else
+                {
+                    sql = @"UPDATE Propietario 
+                               SET 
+                                 Activo=0
+                              WHERE
+                                 Id = @Id";
+                }
+
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@Id", id);
+                    conn.Open();
+                    res = Convert.ToInt32(comm.ExecuteNonQuery());
+                    conn.Close();
+                }
+            }
+            return res;
+        }
+
+        internal bool NoTienePropiedades(int id)
+        {
+            bool res = true;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT DISTINCT PropietarioId FROM Inmueble
+                                WHERE PropietarioId=@Id";
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@Id", id);
+                    conn.Open();
+                    if (comm.ExecuteNonQuery() > 0)
+                    {
+                        res = true;
+                    }
+                }
+            }
+            return res;
+        }
 
         public IList<Propietario> ObtenerTodos()
         {

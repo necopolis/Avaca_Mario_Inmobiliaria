@@ -78,6 +78,11 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             }
             catch (Exception ex)
             {
+                if (ex.HResult == -2146232060)
+                {
+                    TempData["Error"] = @"Esta queriendo agregar un documento duplicado";
+                    return RedirectToAction(nameof(Index));
+                }
                 TempData["Error"] = @"No se ha podido Agregar el propietario, 
                                 se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
                 return RedirectToAction(nameof(Index));
@@ -147,22 +152,32 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
-            try
-            {
-                var res = data.Baja(id);
-                if (res>0)
+                bool admin = false;
+                var NotPropiedades = false;
+                try
                 {
-                    ViewBag.Message = "Propietario Eliminado con Exito";
+                    
+                    if (User.IsInRole("Administrador"))
+                    {
+                        NotPropiedades = data.NoTienePropiedades(id);
+                        admin = true;
+                    }
+                    if (NotPropiedades)
+                    {
+                        TempData["Error"] = @"Inquilino que quiere eliminar tiene Propiedades";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    var res = data.Baja(id, admin);
+                    if (res > 0)
+                    {
+                        TempData["Message"] = @"Propietario eliminado correctamente";
+                        return RedirectToAction(nameof(Index));
+                    }
+
+                    TempData["Error"] = @"No se ha podido eliminar el Propietario, intente nuevamente";
                     return RedirectToAction(nameof(Index));
+
                 }
-                else
-                {
-                    ViewBag.Error = @"No se ha podido Eliminar el propietario
-                                    Intentelo mas tarde o realice el reclamo a servicio tecnico";
-                    return View();
-                }
-                
-            }
             catch (Exception ex)
             {
                 //ViewBag.Error = ex.Message;

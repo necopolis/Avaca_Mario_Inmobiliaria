@@ -82,7 +82,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                                 Id = reader.GetInt32(12),
                                 Direccion = reader.GetString(13),
                                 Precio=reader.GetDecimal(14),
-                                Uso=reader.GetString(15)
+                                Uso=reader.GetInt32(15)
                             },
                             
                             Garante= new Garante
@@ -182,7 +182,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                                 Id = reader.GetInt32(3),
                                 Direccion = reader.GetString(10),
                                 Precio = reader.GetDecimal(11),
-                                Uso = reader.GetString(12),
+                                Uso = reader.GetInt32(12),
                             },
 
                             Garante = new Garante
@@ -359,7 +359,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                                 Id = reader.GetInt32(12),
                                 Direccion = reader.GetString(13),
                                 Precio = reader.GetDecimal(14),
-                                Uso = reader.GetString(15)
+                                Uso = reader.GetInt32(15)
                             },
 
                             Garante = new Garante
@@ -376,7 +376,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return res;
         }
-        public bool fechasCorrectas(int id, DateTime desde, DateTime hasta) 
+        //Fechas validad para el inmueble
+        public bool fechasCorrectas(int idInmueble, DateTime desde, DateTime hasta, int idContrato) 
         {
             bool res = true;
 
@@ -385,15 +386,42 @@ namespace Avaca_Mario_Inmobiliaria.Models
                 string sql = @"SELECT c.* FROM Contrato c
                                 WHERE (c.FechaInicio BETWEEN @desde AND @hasta
                                 OR c.FechaFin BETWEEN @desde AND @hasta)
-                                AND c.Activo =1 AND c.InmuebleId = @Id";
+                                AND c.Activo =1 AND c.InmuebleId = @Id
+                                AND c.Id != ContratoId";
                 using (SqlCommand comm=new SqlCommand(sql, conn)) 
                 {
                     comm.Parameters.AddWithValue("@desde", desde);
                     comm.Parameters.AddWithValue("@hasta", hasta);
-                    comm.Parameters.AddWithValue("@Id", id);
+                    comm.Parameters.AddWithValue("@Id", idInmueble);
+                    comm.Parameters.AddWithValue("@ContratoId", idContrato);
                     conn.Open();
                     var reader = comm.ExecuteReader();
                     if (reader.Read()) {
+                        res = false;
+                    }
+                }
+            }
+            return res;
+        }
+        public bool fechasCorrectas(int idInmueble, DateTime desde, DateTime hasta)
+        {
+            bool res = true;
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT c.* FROM Contrato c
+                                WHERE (c.FechaInicio BETWEEN @desde AND @hasta
+                                OR c.FechaFin BETWEEN @desde AND @hasta)
+                                AND c.Activo =1 AND c.InmuebleId = @Id";
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@desde", desde);
+                    comm.Parameters.AddWithValue("@hasta", hasta);
+                    comm.Parameters.AddWithValue("@Id", idInmueble);
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    if (reader.Read())
+                    {
                         res = false;
                     }
                 }

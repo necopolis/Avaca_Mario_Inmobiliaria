@@ -1,0 +1,86 @@
+﻿@model IEnumerable<Avaca_Mario_Inmobiliaria.Models.Inmueble>
+
+@{
+    ViewData["Title"] = "ListaInmuebles";
+    string returnUrl = (String)ViewBag.returnUrl;
+}
+
+<h1>Lista de Inmuebles de:</h1>
+<h3>
+    @(Model.First<Inmueble>().Duenio.Nombre + " "+Model.First<Inmueble>().Duenio.Apellido )
+</h3>
+    <div class="row">
+        <div class="col-2">
+            <p>
+                <a asp-action="Create">Create New</a>
+            </p>
+        </div>
+        <div class="col-2">
+            <p>
+                <a href=@returnUrl>Regresar</a>
+            </p>
+        </div>
+    </div>
+    <table class="table" id="tablaId">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Direccion)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Uso)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Tipo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CantAmbiente)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Precio)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Activo)
+                </th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Direccion)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Uso)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Tipo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CantAmbiente)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Precio)
+                    </td>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Activo)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Editar", "Edit", new { id = item.Id }) |
+                        @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
+                        @if (item.Activo)
+                        {@Html.ActionLink("Eliminar", "Delete", new { id = item.Id });
+                    }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_Table");}
+
+    }

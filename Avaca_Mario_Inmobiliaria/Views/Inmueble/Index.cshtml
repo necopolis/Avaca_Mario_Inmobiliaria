@@ -9,11 +9,11 @@
 <p>
     <a asp-action="Create">Crear Inmueble</a>
 </p>
-<table class="table">
+<table class="table" id="tablaId">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Id)
+                @Html.DisplayNameFor(model => model.PropietarioId)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Direccion)
@@ -30,9 +30,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Precio)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PropietarioId)
-            </th>
+
             <th>
                 @Html.DisplayNameFor(model => model.Activo)
             </th>
@@ -40,19 +38,20 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        @foreach (var item in Model)
+        {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Id)
+                @(item.Duenio.Nombre + " " + item.Duenio.Apellido)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Direccion)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Uso)
+                @Html.DisplayFor(modelItem => item.UsoNombre)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Tipo)
+                @Html.DisplayFor(modelItem => item.TipoNombre)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CantAmbiente)
@@ -60,20 +59,28 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Precio)
             </td>
-            <td>
-                @(item.Duenio.Nombre + " " + item.Duenio.Apellido)
-            </td>
+
             <td>
                 @Html.DisplayFor(modelItem => item.Activo)
             </td>
             <td>
-                @Html.ActionLink("Editar", "Edit", new { id = item.Id }) |
+                @if (item.Activo || User.IsInRole("Administrador"))
+                {
+                    @Html.ActionLink("Editar", "Edit", new { id = item.Id });
+
+                }|
                 @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
-                @if (item.Activo)
+
+                @if (item.Activo || User.IsInRole("Administrador"))
                 {@Html.ActionLink("Eliminar", "Delete", new { id = item.Id });
             }
+                
             </td>
         </tr>
-}
+        }
     </tbody>
 </table>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_Table");}
+
+}

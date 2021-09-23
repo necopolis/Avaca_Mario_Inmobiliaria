@@ -71,10 +71,10 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
 
                 return Ok(pc); // { "Inquilino": { "Nombre":"Pepito", ... }, "Contratos":[{"IdINmueble": 8}, {}, {}] }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
 
-                throw e;
+                throw ex;
             }
 
         }
@@ -175,7 +175,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 }
                 
             }
-            catch
+            catch (Exception ex)
             {
                 TempData["Message"] = "Error grave comuniquese con el servicio tecnico";
                 return View();
@@ -208,8 +208,9 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 }
                 
             }
-            catch
+            catch (Exception ex)
             {
+                TempData["Error"] =@"Error grave llame a servicio tecnico";
                 return View();
             }
         }

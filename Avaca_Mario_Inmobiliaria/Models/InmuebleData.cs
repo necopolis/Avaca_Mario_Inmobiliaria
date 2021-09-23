@@ -59,8 +59,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
                         {
                             Id = reader.GetInt32(0),
                             Direccion = reader.GetString(1),
-                            Uso = reader.GetString(2),
-                            Tipo = reader.GetString(3),
+                            Uso = reader.GetInt32(2),
+                            Tipo = reader.GetInt32(3),
                             CantAmbiente = reader.GetInt32(4),
                             Precio = reader.GetDecimal(5),
                             Activo = reader.GetBoolean(6),
@@ -79,19 +79,32 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return res;
         }
-        public int Baja(int id)
+        public int Baja(int id, bool admin)
         {
             int res = -1;
+            string sql;
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"UPDATE Inmueble SET
-                    Activo=0
-                    WHERE Id = @Id";
+                if (admin)
+                {
+                    sql = @"DELETE FROM Inmueble WHERE Id=@Id";
+                }
+                else
+                {
+                    sql = @"UPDATE Inmueble 
+                               SET 
+                                 Activo=0
+                              WHERE
+                                 Id = @Id";
+                }
+
+
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     comm.Parameters.AddWithValue("@Id", id);
                     conn.Open();
-                    res = comm.ExecuteNonQuery();
+                    res = Convert.ToInt32(comm.ExecuteNonQuery());
                     conn.Close();
                 }
             }
@@ -139,8 +152,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
                         {
                             Id = reader.GetInt32(0),
                             Direccion = reader.GetString(1),
-                            Uso = reader.GetString(2),
-                            Tipo = reader.GetString(3),
+                            Uso = reader.GetInt32(2),
+                            Tipo = reader.GetInt32(3),
                             CantAmbiente = reader.GetInt32(4),
                             Precio = reader.GetDecimal(5),
                             Activo = reader.GetBoolean(6),
@@ -157,6 +170,89 @@ namespace Avaca_Mario_Inmobiliaria.Models
                 }
             }
             return inmueble;
+        }
+
+        internal bool NoTieneContrato(int id)
+        {
+            bool res = false;
+            string sql = @"SELECT c.Id FROM contrato c WHERE c.InmuebleId = @id
+                        AND c.Valido = 1 AND current_date() BETWEEN c.FechaInicio AND c.FechaFin;
+";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@Id", id);
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    res = (reader.HasRows) ? true : false;
+                    conn.Close();
+                }
+            }
+            return res;
+        }
+
+        internal bool NoTienePropietario(int id)
+        {
+            bool res = true;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT DISTINCT PropietarioId FROM Inmueble
+                                WHERE PropietarioId=@Id";
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@Id", id);
+                    conn.Open();
+                    if (comm.ExecuteNonQuery() > 0)
+                    {
+                        res = true;
+                    }
+                }
+            }
+            return res;
+        }
+
+        internal IList<Inmueble> ListaInmPropietario(int id)
+        {
+            IList<Inmueble> res = new List<Inmueble>();
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT i.Id, i.Direccion, i.Uso, i.Tipo, i.CantAmbiente, i.Precio, i.Activo, i.PropietarioId,
+                    p.Nombre, p.Apellido
+                    FROM Inmueble i INNER JOIN Propietario p ON i.PropietarioId = p.Id
+                    WHERE i.PropietarioId=@Id";
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@Id", id);
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Inmueble inmueble = new Inmueble
+                        {
+                            Id = reader.GetInt32(0),
+                            Direccion = reader.GetString(1),
+                            Uso = reader.GetInt32(2),
+                            Tipo = reader.GetInt32(3),
+                            CantAmbiente = reader.GetInt32(4),
+                            Precio = reader.GetDecimal(5),
+                            Activo = reader.GetBoolean(6),
+                            PropietarioId = reader.GetInt32(7),
+                            Duenio = new Propietario
+                            {
+                                Id = reader.GetInt32(7),
+                                Nombre = reader.GetString(8),
+                                Apellido = reader.GetString(9),
+                            }
+                        };
+                        res.Add(inmueble);
+                    }
+                    conn.Close();
+                }
+            }
+            return res;
         }
 
         public IList<Inmueble> ObtenerTodosValidos()
@@ -186,8 +282,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
                         {
                             Id = reader.GetInt32(0),
                             Direccion = reader.GetString(1),
-                            Tipo = reader.GetString(2),
-                            Uso = reader.GetString(3),
+                            Tipo = reader.GetInt32(2),
+                            Uso = reader.GetInt32(3),
                             CantAmbiente = reader.GetInt32(4),
                             Precio = reader.GetDecimal(5),
                             Activo = reader.GetBoolean(6),
@@ -236,6 +332,26 @@ namespace Avaca_Mario_Inmobiliaria.Models
                 }
             }
             
+            return res;
+        }
+        public bool isTaken(int id)
+        {
+            bool res = false;
+            string sql = @"SELECT c.Id FROM contrato c WHERE c.InmuebleId = @id
+                        AND c.Valido = 1 AND current_date() BETWEEN c.FechaInicio AND c.FechaFin;
+";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@Id", id);
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    res = (reader.HasRows) ? true : false;
+                    conn.Close();
+                }
+            }
             return res;
         }
     }

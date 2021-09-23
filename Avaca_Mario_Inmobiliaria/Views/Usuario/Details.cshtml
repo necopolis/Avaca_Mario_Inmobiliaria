@@ -5,7 +5,7 @@
 }
 
 <h1>Detalles</h1>
-
+<hr />
 <div>
     <h4>Usuario</h4>
     <hr />
@@ -31,10 +31,20 @@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Avatar)
         </dt>
-        <dt class = "col-sm-2">
-            <td>
-                <img width="100" src="@Model.Avatar" />
-            </td>
+        <dt class="col-sm-2">
+            @if (!String.IsNullOrEmpty(Model.Avatar))
+            {
+                <td>
+                    <img width="100" src="@Model.Avatar" />
+                </td>
+            }
+            else
+            {
+                <td>
+                    <img width="100" src="~/img/avatar.png" />
+                </td>
+            }
+
         </dt>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.RolNombre)

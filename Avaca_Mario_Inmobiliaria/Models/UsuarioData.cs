@@ -176,5 +176,106 @@ namespace Avaca_Mario_Inmobiliaria.Models
 			}
 			return e;
 		}
-	}
+
+		public int Update(Usuario u, bool editoRol, bool editAvatar) 
+		{
+			int res = -1;
+			string sql;
+			int flag = 0;
+            if (!editoRol && !editAvatar)
+            {
+				sql = @"UPDATE Usuario SET Nombre=@Nombre, Apellido=@Apellido, Email=@Email
+						WHERE Id=@Id;";
+			}
+            else if (editoRol && editAvatar)
+            {
+				sql = @"UPDATE Usuario SET Nombre=@Nombre, Apellido=@Apellido, Email=@Email, Rol=@Rol
+								WHERE Id=@Id;";
+				flag = 1;
+			}
+            else if (!editoRol && editAvatar)
+            {
+				sql = @"UPDATE Usuario SET Nombre=@Nombre, Apellido=@Apellido, Email=@Email,
+							Avatar = @Avatar WHERE Id=@Id;";
+				flag = 2;
+			}
+            else
+            {
+				sql= @"UPDATE Usuario SET Nombre=@Nombre, Apellido=@Apellido, Email=@Email,
+					Rol =@Rol, Avatar=@Avatar WHERE Id=@Id;";
+				flag = 3;
+			}
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                using (SqlCommand comm= new SqlCommand(sql, conn))
+                {
+                    switch (flag)
+                    {
+						case 0:
+							{
+								comm.Parameters.AddWithValue("@Id", u.Id);
+								comm.Parameters.AddWithValue("@Nombre", u.Nombre);
+								comm.Parameters.AddWithValue("@Apellido", u.Apellido);
+								comm.Parameters.AddWithValue("@Nombre", u.Email);
+							}
+                            break;
+						case 1:
+							{
+								comm.Parameters.AddWithValue("@Id", u.Id);
+								comm.Parameters.AddWithValue("@Nombre", u.Nombre);
+								comm.Parameters.AddWithValue("@Apellido", u.Apellido);
+								comm.Parameters.AddWithValue("@Nombre", u.Email);
+								comm.Parameters.AddWithValue("@Rol", u.Rol);
+
+							}
+							break;
+						case 2:
+							{
+								comm.Parameters.AddWithValue("@Id", u.Id);
+								comm.Parameters.AddWithValue("@Nombre", u.Nombre);
+								comm.Parameters.AddWithValue("@Apellido", u.Apellido);
+								comm.Parameters.AddWithValue("@Nombre", u.Email);
+								comm.Parameters.AddWithValue("@Avatar", u.Avatar);
+							}
+							break;
+						case 3:
+							{
+								comm.Parameters.AddWithValue("@Id", u.Id);
+								comm.Parameters.AddWithValue("@Nombre", u.Nombre);
+								comm.Parameters.AddWithValue("@Apellido", u.Apellido);
+								comm.Parameters.AddWithValue("@Nombre", u.Email);
+								comm.Parameters.AddWithValue("@Rol", u.Rol);
+								comm.Parameters.AddWithValue("@Avatar", u.Avatar);
+							}
+							break;
+					}
+					conn.Open();
+					res = comm.ExecuteNonQuery();
+					conn.Close();
+                }
+            }
+			return res;
+		}
+
+        internal int UpdatePass(int id, string passNuevaHashed)
+        {
+			int res = -1;
+            using (SqlConnection conn= new SqlConnection(connectionString))
+            {
+				string sql =@"UPDATE Usuario SET Clave = @Clave WHERE Id=@Id";
+
+                using (SqlCommand comm=new SqlCommand(sql, conn))
+                {
+					comm.Parameters.AddWithValue("@Id", id);
+					comm.Parameters.AddWithValue("@Clave", passNuevaHashed);
+
+					conn.Open();
+					res = comm.ExecuteNonQuery();
+					conn.Close();
+                }
+            }
+            return res;
+        }
+    }
 }

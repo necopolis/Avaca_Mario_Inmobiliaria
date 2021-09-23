@@ -133,16 +133,46 @@ namespace Avaca_Mario_Inmobiliaria.Models
             return i;
         }
 
-        public int Baja(int id)
+        internal bool NoTieneContrato(int id)
+        {
+            bool res = true;
+            using (SqlConnection conn=new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT DISTINCT InquilinoId FROM Contrato
+                                WHERE InquilinoId=@Id";
+                using (SqlCommand comm= new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@Id", id);
+                    conn.Open();
+                    if (comm.ExecuteNonQuery()>0)
+                    {
+                        res = true;
+                    }
+                }
+            }
+            return res;
+        }
+
+        public int Baja(int id, bool admin)
         {
             int res = -1;
+            string sql;
+            
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"UPDATE Inquilino 
+                if (admin)
+                {
+                    sql = @"DELETE FROM Inquilino WHERE Id=@Id";
+                }
+                else
+                {
+                    sql = @"UPDATE Inquilino 
                                SET 
                                  Activo=0
                               WHERE
                                  Id = @Id";
+                }
+                    
 
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -220,7 +250,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return res;
         }
-
+        
 
     }
 }

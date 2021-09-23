@@ -117,7 +117,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             int res = -1;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = $"DELETE FROM Pago WHERE IdPago = @id";
+                string sql = $"DELETE FROM Pago WHERE Id = @id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     comm.Parameters.AddWithValue("@Id", id);
@@ -133,7 +133,11 @@ namespace Avaca_Mario_Inmobiliaria.Models
             int res = -1;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = $"DELETE FROM Pago WHERE IdPago = @id";
+                string sql = @"UPDATE Pago
+                               SET
+                                 Activo = 0
+                              WHERE
+                                 Id = @Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     comm.Parameters.AddWithValue("@Id", id);
