@@ -1,14 +1,17 @@
 ﻿using Avaca_Mario_Inmobiliaria.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Avaca_Mario_Inmobiliaria.Controllers
 {
+    [Authorize]
     public class PropietarioController : Controller
     {
         protected readonly IConfiguration configuration;
@@ -76,11 +79,12 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 
                 
             }
-            catch (Exception ex)
+            catch (SqlException e)
             {
-                if (ex.HResult == -2146232060)
+
+                if (e.Number == 2627)
                 {
-                    TempData["Error"] = @"Esta queriendo agregar un documento duplicado";
+                    TempData["Error"] = "El numero de documento que quiere ingresar esta duplicado";
                     return RedirectToAction(nameof(Index));
                 }
                 TempData["Error"] = @"No se ha podido Agregar el propietario, 
@@ -130,8 +134,14 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 }
                 
             }
-            catch (Exception ex)
+            catch (SqlException e)
             {
+
+                if (e.Number == 2627)
+                {
+                    TempData["Error"] = "El numero de documento que quiere ingresar esta duplicado";
+                    return RedirectToAction(nameof(Index));
+                }
                 TempData["Error"] = @"No se ha podido Editar el propietario, 
                                 se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
                 return RedirectToAction(nameof(Index));
@@ -153,16 +163,16 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         public ActionResult Delete(int id, IFormCollection collection)
         {
                 bool admin = false;
-                var NotPropiedades = false;
+                var TienePropiedades = false;
                 try
                 {
                     
                     if (User.IsInRole("Administrador"))
                     {
-                        NotPropiedades = data.NoTienePropiedades(id);
+                        TienePropiedades = data.TienePropiedades(id);
                         admin = true;
                     }
-                    if (NotPropiedades)
+                    if (TienePropiedades)
                     {
                         TempData["Error"] = @"Inquilino que quiere eliminar tiene Propiedades";
                         return RedirectToAction(nameof(Index));

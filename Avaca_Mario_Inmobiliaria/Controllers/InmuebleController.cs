@@ -1,4 +1,5 @@
 ﻿using Avaca_Mario_Inmobiliaria.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Avaca_Mario_Inmobiliaria.Controllers
 {
+    [Authorize]
     public class InmuebleController : Controller
     {
         protected readonly IConfiguration configuration;
@@ -45,6 +47,11 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             ViewBag.Propietarios = dataProp.ObtenerTodosActivos();
             ViewBag.Usos = Inmueble.ObtenerUsos();
             ViewBag.Tipos = Inmueble.ObtenerTipos();
+            if (ViewBag.Propietarios.Count==0)
+            {
+                TempData["Error"] = "No hay en base de datos Propietarios para cargar un inmueble";
+                return RedirectToAction(nameof(Index));
+            }
             return View();
         }
 
@@ -57,6 +64,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    //TODO Controlar que los id de propietario exista
                     var res = dataInm.Alta(inmueble);
                     if (res > 0)
                     {
@@ -85,8 +93,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Error"] = @"No se ha podido Agregar el Inmueble, 
-                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                TempData["Error"] = @"ERROR al Agregar el Inmueble, realice el reclamo a servicio tecnico";
                 return RedirectToAction(nameof(Index));
                 //throw;
                 //return Json(new { Error = ex.Message });
@@ -96,15 +103,25 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: InmuebleController/Edit/5
         public ActionResult Edit(int id)
         {
+            var tieneContrato = dataInm.NoTieneContrato(id);
             var res = dataInm.ObtenerPorId(id);
+            if (tieneContrato)
+            {
+                ViewBag.Message = "Inmueble con contrato solo se puede modificar Precio y Cantidad de ambientes";
+                ViewBag.TieneContrato =tieneContrato;
+                return View(res);
+            }
             ViewBag.Propietarios = dataProp.ObtenerTodosActivos();
             ViewBag.Usos = Inmueble.ObtenerUsos();
             ViewBag.Tipos = Inmueble.ObtenerTipos();
+            // TODO: Tendria que revisar si tiene contrato y si lo tiene solo editar el precio
             //var isTaken = dataInm.isTaken(id);
             //if (isTaken)
             //{
 
             //}
+
+            ViewBag.TieneContrato =tieneContrato;
             return View(res);
         }
 
@@ -117,19 +134,18 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var res = dataInm.Modificacion(inmueble);
-                    if (res > 0)
-                    {
-                        TempData["Message"] = "Inmueble Creado Correctamente";
-                        return RedirectToAction(nameof(Index));
-                    }
-                    else
-                    {
-                        ViewBag.Error = @"No se ha podido Agregar el Inmueble
+                        var res = dataInm.Modificacion(inmueble);
+                        if (res > 0)
+                        {
+                            TempData["Message"] = "Inmueble Actualizado Correctamente";
+                            return RedirectToAction(nameof(Index));
+                        }
+                        else
+                        {
+                            ViewBag.Error = @"No se ha podido Agregar el Inmueble
                                         Intentelo mas tarde o realice el reclamo a servicio tecnico";
-                        return View();
-                    }
-                    
+                            return View();
+                        }
                 }
                 else
                 {
@@ -140,8 +156,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Error"] = @"No se ha podido Editar el Inmueble, 
-                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                TempData["Error"] = @"ERROR al Editar el Inmueble, realice el reclamo a servicio tecnico";
                 return RedirectToAction(nameof(Index));
                 //throw;
                 //return Json(new { Error = ex.Message });
@@ -171,18 +186,18 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         public ActionResult Delete(int id, IFormCollection collection)
         {
             bool admin = false;
-            var NotienePropietario = false;
+            var tienePropietario = false;
             var isToken = false;
             try
             {
 
                 if (User.IsInRole("Administrador"))
                 {
-                    NotienePropietario = dataInm.NoTienePropietario(id);
+                    tienePropietario = dataInm.TienePropietario(id);
                     isToken = dataInm.NoTieneContrato(id);
                     admin = true;
                 }
-                if (NotienePropietario || isToken)
+                if (tienePropietario || isToken)
                 {
                     TempData["Error"] = @"El Inmueble que quiere eliminar tiene contratos o esta alquilado";
                     return RedirectToAction(nameof(Index));
@@ -202,8 +217,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Error"] = @"No se ha podido Eliminar el Inquilino, 
-                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                TempData["Error"] = @"ERROR al Eliminar el Inquilino, realice el reclamo a servicio tecnico";
                 return RedirectToAction(nameof(Index));
                 //throw;
                 //return Json(new { Error = ex.Message });
@@ -212,26 +226,49 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: Inmuebles/ListaInmuebles/4
         public ActionResult ListaInmuebles(int id)
         {
-            //var returnUrl = Request.Headers["referer"].FirstOrDefault(); ;
+            var returnUrl = Request.Headers["referer"].FirstOrDefault(); ;
             try
             {
                 var res = dataInm.ListaInmPropietario(id);
-                if (res != null)
+                if (res.Count>0)
                 {
                     ViewBag.Message = @"Lista de Inmubeles encontrados";
-                    //ViewBag.returnUrl = returnUrl;
-                    return View(res);
+                    //Podria usar la vista de index de inmuebles
+                    ViewBag.returnUrl = returnUrl;
+                    ViewBag.Bandera = true;
+                    return View("Index",res);
                 }
-                ViewBag.Error = "No hay inmuebles para este propietario";
-                return View();
+                TempData["Error"] = "No hay inmuebles para este propietario";
+                return RedirectToAction("Index","Propietario");
             }
             catch (Exception e)
             {
-                TempData["Error"] = "Error grave comuniquese con el servicio tecnico";
+                TempData["Error"] = "Error comuniquese con el servicio tecnico";
                 return RedirectToAction(nameof(Index));
                 //throw;
             }
         }
-
+        // GET: Inmuebles/Activos
+        public ActionResult Activos()
+        {
+            string returnUrl = Request.Headers["referer"].FirstOrDefault();
+            try
+            {
+                var res = dataInm.ObtenerTodosActivos();
+                if (res.Count > 0)
+                {
+                    ViewBag.returnUrl = returnUrl;
+                    return View(nameof(Index), res);
+                }
+                TempData["Error"] = "No hay Inmuebles Activos";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "No se pudo realizar la tarea, ERROR comuniquese con el servicio tecnico";
+                return View();
+                //throw;
+            }
+        }
     }
 }

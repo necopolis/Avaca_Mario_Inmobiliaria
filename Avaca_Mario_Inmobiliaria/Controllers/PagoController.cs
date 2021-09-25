@@ -1,5 +1,6 @@
 ﻿using Avaca_Mario_Inmobiliaria.Models;
 using InmobiliariaAlbornoz.ModelsAux;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Avaca_Mario_Inmobiliaria.Controllers
 {
+    [Authorize]
     public class PagoController : Controller
     {
         protected readonly IConfiguration configuration;
@@ -28,6 +30,12 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             public ActionResult Index()
         {
             var pagos = dataPago.ObtenerTodos();
+            if (TempData.ContainsKey("Message") || TempData.ContainsKey("Error"))
+            {
+                ViewBag.Message = TempData["Message"];
+                ViewBag.Error = TempData["Error"];
+            }
+            ViewBag.ContratoUnico = false;
             return View(pagos);
         }
 
@@ -210,9 +218,46 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             }
             catch (Exception ex)
             {
-                TempData["Error"] =@"Error grave llame a servicio tecnico";
+                TempData["Error"] =@"Error en Eliminar un pago, llame a servicio tecnico";
                 return View();
             }
+        }
+        // GET: Contratos/pagos/idContrato
+        public ActionResult PagosContratos(int id)
+        {
+            bool vigente = false;
+            var returnUrl = Request.Headers["referer"].FirstOrDefault();
+            try
+            {
+                //Controlar que el contrato sea vigente
+                // SELECT c.Id FROM contrato c WHERE c.InmuebleId = @Id
+               // AND c.Activo = 1 AND getdate() BETWEEN c.FechaInicio AND c.FechaFin
+                vigente = dataContrato.ContratoVigente(id);
+                if (vigente)
+                {
+                    var res = dataPago.PagosContratos(id);
+                    if (res.Count > 0)
+                    {
+                        ViewBag.Message = "Lista de Pagos del contrato encontrada";
+                        ViewBag.ContratoUnico = true;
+                        return View("Index", res);
+                    }
+
+                    ViewBag.Message = "No hay pagos del contrato encontrada, puede realizar el primer pago";
+                    ViewBag.Contrato = dataContrato.ObtenerPorId(id);
+                    return View("Create");
+                }
+                TempData["Error"] = "El contrato no es vigente no se puede realizar pagos";
+                return RedirectToAction(nameof(Index));
+
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "ERROR en Pagos de un Contrato, llame a servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+            }
+            
         }
     }
 }

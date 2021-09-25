@@ -9,7 +9,7 @@
 <p>
     <a asp-action="Create">Crear Garante</a>
 </p>
-<table class="table">
+<table class="table" id="tablaId">
     <thead>
         <tr>
             <th>
@@ -28,52 +28,51 @@
                 @Html.DisplayNameFor(model => model.Email)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.LugarTrabajo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sueldo)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Activo)
             </th>
             <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DNI)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Apellido)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Telefono)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LugarTrabajo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sueldo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Activo)
-            </td>
-            <td>
-                @Html.ActionLink("Editar", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
-                @if (item.Activo && User.IsInRole("Administrador"))
-                {@Html.ActionLink("Eliminar", "Delete", new { id = item.Id });
-            }
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DNI)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Apellido)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Telefono)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @(item.Activo? "Si" : "No")
+                </td>
+                <td>
+                    @if (item.Activo || User.IsInRole("Administrador"))
+                    {
+                        @Html.ActionLink("Editar", "Edit", new { id = item.Id });
+
+                    }|
+                    @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
+
+                    @if (item.Activo || User.IsInRole("Administrador"))
+                    {@Html.ActionLink("Eliminar", "Delete", new { id = item.Id });
+                }
+
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_Table");}
+
+}

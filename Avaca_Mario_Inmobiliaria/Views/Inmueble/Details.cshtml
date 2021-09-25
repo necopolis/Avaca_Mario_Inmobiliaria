@@ -53,10 +53,10 @@
             @Html.DisplayFor(model => model.Activo)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Duenio.Nombre)
+            @Html.DisplayNameFor(model => model.Duenio)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Duenio.Nombre)
+            @Model.Duenio.Apellido @Model.Duenio.Nombre
         </dd>
     </dl>
 </div>

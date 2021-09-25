@@ -39,9 +39,9 @@ namespace Avaca_Mario_Inmobiliaria.Models
         [Display(Name = "Ambientes"), Required(ErrorMessage = "Este campo es Obligatorio.")]
         public int CantAmbiente { get; set; }
 
-        [Required(ErrorMessage = "Ingrese un numero con decimal")]
+        [Range(0.0, Double.MaxValue, ErrorMessage = "Debe ser mayor a 0")]
         public decimal Precio { get; set; }
-        
+
         public bool Activo { get; set; }
         
         [Display(Name = "Dueño")]
@@ -51,8 +51,6 @@ namespace Avaca_Mario_Inmobiliaria.Models
         [ForeignKey(nameof(PropietarioId))]
         public Propietario Duenio { get; set; }
 
-
-        
 
         public static IDictionary<int, string> ObtenerUsos()
         {
@@ -64,8 +62,6 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return usos;
         }
-
-        
 
         public static IDictionary<int, string> ObtenerTipos()
         {

@@ -20,7 +20,7 @@
 
                 <div class="form-group">
                     <label asp-for="FechaPago" class="control-label"></label>
-                    <input asp-for="FechaPago" class="form-control" />
+                    <input min=@DateTime.Now.Date asp-for="FechaPago" class="form-control" />
                     <span asp-validation-for="FechaPago" class="text-danger"></span>
                 </div>
                 <div class="form-group">

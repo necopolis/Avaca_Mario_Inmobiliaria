@@ -54,7 +54,7 @@
                     @Html.DisplayFor(modelItem => item.Email)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Activo)
+                    @(item.Activo? "Sí" : "No")
                 </td>
                 <td>
                     @if (item.Activo || User.IsInRole("Administrador"))
@@ -67,10 +67,7 @@
                     @if (item.Activo || User.IsInRole("Administrador"))
                     {@Html.ActionLink("Eliminar", "Delete", new { id = item.Id });
                 }|
-                    @if (item.Activo)
-                    {<a asp-action="ListaInmuebles" asp-controller="Inmueble" asp-route-id="@item.Id">Inmuebles</a>;
-                    }
-
+                    <a asp-action="ListaInmuebles" asp-controller="Inmueble" asp-route-id="@item.Id">Inmuebles</a>
                 </td>
             </tr>
         }

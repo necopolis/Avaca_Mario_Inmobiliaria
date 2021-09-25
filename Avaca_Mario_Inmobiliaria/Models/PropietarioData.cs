@@ -21,7 +21,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             int res = -1;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"INSERT INTO Propietario (DNI, Nombre, Apellido, Telefono, Email)
+                string sql = @"INSERT INTO Propietario (DNI, Nombre, Apellido, Telefono, Email, Activo)
                                 VALUES (@DNI, @Nombre, @Apellido, @Telefono, @Email, @Activo);
                                 SELECT SCOPE_IDENTITY();";
 
@@ -49,7 +49,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             {
                 string sql = @"UPDATE Propietario 
                                SET 
-                                DNI = @DNI, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email
+                                DNI = @DNI, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email, Activo=@Activo
                               WHERE
                                  Id = @Id";
 
@@ -60,6 +60,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Apellido", propietario.Apellido);
                     comm.Parameters.AddWithValue("@Telefono", propietario.Telefono);
                     comm.Parameters.AddWithValue("@Email", propietario.Email);
+                    comm.Parameters.AddWithValue("@Activo", propietario.Activo);
                     comm.Parameters.AddWithValue("@Id", id);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteNonQuery());
@@ -74,7 +75,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             Propietario i = null;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email FROM Propietario 
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, Activo FROM Propietario 
                                 WHERE Id=@id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -91,6 +92,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             Apellido = (string)reader[nameof(Propietario.Apellido)],
                             Telefono = (string)reader[nameof(Propietario.Telefono)],
                             Email = (string)reader[nameof(Propietario.Email)],
+                            Activo = (bool)reader[nameof(Propietario.Activo)],
                         };
                     }
                     conn.Close();
@@ -151,9 +153,9 @@ namespace Avaca_Mario_Inmobiliaria.Models
             return res;
         }
 
-        internal bool NoTienePropiedades(int id)
+        internal bool TienePropiedades(int id)
         {
-            bool res = true;
+            bool res = false;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string sql = @"SELECT DISTINCT PropietarioId FROM Inmueble
@@ -162,7 +164,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
                 {
                     comm.Parameters.AddWithValue("@Id", id);
                     conn.Open();
-                    if (comm.ExecuteNonQuery() > 0)
+                    var reader = comm.ExecuteReader();
+                    if (reader.Read())
                     {
                         res = true;
                     }

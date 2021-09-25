@@ -14,10 +14,10 @@ namespace Avaca_Mario_Inmobiliaria.Models
         [Required(ErrorMessage = "Este campo es Obligatorio."), RegularExpression("[0-9]{8,10}", ErrorMessage = "Solo numeros y hasta 10 digitos")]
         public string DNI { get; set; }
 
-        [RegularExpression(@"^[a-zA-Z\s]{2,254}", ErrorMessage = "Solo letras o espacios"), Display(Prompt = "Juan")]
+        [RegularExpression(@"^[a-zA-Z\s]{2,254}", ErrorMessage = "Solo letras o espacios")]
         public string Nombre { get; set; }
 
-        [RegularExpression(@"^[a-zA-Z\s]{2,254}", ErrorMessage = "Solo letras o espacios"), Display(Prompt = "Lopez")]
+        [RegularExpression(@"^[a-zA-Z\s]{2,254}", ErrorMessage = "Solo letras o espacios")]
         public string Apellido { get; set; }
 
         [Display(Name = "Numero de telefono"), Required, Phone]
@@ -31,7 +31,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
         [Display(Name ="Lugar de Trabajo"),Required]
         public string LugarTrabajo { get; set; }
 
-        [Display(Prompt = "300000", Name ="Recibo de Sueldo"), Required(ErrorMessage ="Este campo es Obligatorio")]
+        [Display(Name ="Recibo de Sueldo"), Required(ErrorMessage ="Este campo es Obligatorio")]
+        [Range(0.0, Double.MaxValue, ErrorMessage = "Debe ser mayor a 0")]
         public decimal Sueldo { get; set; }
 
         public bool Activo { get; set; }

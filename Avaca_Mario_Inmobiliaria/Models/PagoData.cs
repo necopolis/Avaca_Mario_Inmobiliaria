@@ -221,5 +221,67 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return pago;
         }
+        /// <summary>
+        /// Trae todos los pagos que tiene ese contrato
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>
+        /// Una lista de Pagos
+        /// </returns>
+        internal IList<Pago> PagosContratos(int id)
+        {
+            IList<Pago> res = new List<Pago>();
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT p.Id, p.NumeroPago, p.FechaPago, p.Importe, p.ContratoId,
+                    c.FechaInicio, c.FechaFin,
+                    m.Id,m.Direccion, m.Precio,
+                    inq.Id, inq.Nombre, inq.Apellido
+                    FROM Pago p INNER JOIN Contrato c ON p.ContratoId = c.Id
+                    INNER JOIN Inmueble m ON c.InmuebleId = m.Id
+                    INNER JOIN Inquilino inq ON c.InquilinoId = inq.Id
+                    WHERE c.Id=@Id";
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@Id", id);
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Pago pago = new Pago
+                        {
+                            Id = reader.GetInt32(0),
+                            NumeroPago = reader.GetGuid(1),
+                            FechaPago = reader.GetDateTime(2),
+                            Importe = reader.GetDecimal(3),
+                            ContratoId = reader.GetInt32(4),
+                            Contrato = new Contrato
+                            {
+                                Id = reader.GetInt32(4),
+                                FechaInicio = reader.GetDateTime(5),
+                                FechaFin = reader.GetDateTime(6),
+                                Inquilino = new Inquilino
+                                {
+                                    Id = reader.GetInt32(10),
+                                    Nombre = reader.GetString(11),
+                                    Apellido = reader.GetString(12),
+
+                                },
+                                Inmueble = new Inmueble
+                                {
+                                    Id = reader.GetInt32(7),
+                                    Direccion = reader.GetString(8),
+                                    Precio = reader.GetDecimal(9)
+                                }
+                            }
+                        };
+                        res.Add(pago);
+                    }
+                    conn.Close();
+                }
+            }
+            return res;
+        }
     }
 }

@@ -2,19 +2,42 @@
 
 @{
     ViewData["Title"] = "Lista Inmuebles";
+    string returnUrl = (string)ViewBag.returnUrl;
 }
 
 <h1>Lista de Inmuebles</h1>
 
-<p>
-    <a asp-action="Create">Crear Inmueble</a>
-</p>
+@if (!String.IsNullOrEmpty(returnUrl))
+{
+    <h3>
+        @(Model.First<Inmueble>().Duenio.Nombre + " "+Model.First<Inmueble>().Duenio.Apellido )
+    </h3>
+}
+
+<div class="row">
+    <div>
+        <p>
+            <a asp-action="Create">Crear Inmueble</a>
+            <a asp-action="Disponibles">Consultar por fechas</a>
+            <a asp-action="Activos">Inmuebles Activos</a>
+        </p>
+    </div>
+    @*@if (!String.IsNullOrEmpty(returnUrl))
+    {
+        <div class="col-9">
+            <a href=@returnUrl>Regresar</a>
+        </div>
+    }*@
+
+</div>
 <table class="table" id="tablaId">
     <thead>
         <tr>
+            @if(!ViewBag.Bandera){
             <th>
                 @Html.DisplayNameFor(model => model.PropietarioId)
             </th>
+            }
             <th>
                 @Html.DisplayNameFor(model => model.Direccion)
             </th>
@@ -40,43 +63,45 @@
     <tbody>
         @foreach (var item in Model)
         {
-        <tr>
-            <td>
-                @(item.Duenio.Nombre + " " + item.Duenio.Apellido)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Direccion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UsoNombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TipoNombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CantAmbiente)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Precio)
-            </td>
+            <tr>
+                @if(!ViewBag.Bandera){
+                <td>
+                    @(item.Duenio.Nombre + " " + item.Duenio.Apellido)
+                </td>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.Direccion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UsoNombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TipoNombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CantAmbiente)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Precio)
+                </td>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.Activo)
-            </td>
-            <td>
-                @if (item.Activo || User.IsInRole("Administrador"))
-                {
-                    @Html.ActionLink("Editar", "Edit", new { id = item.Id });
+                <td>
+                    @(item.Activo? "Sí" : "No")
+                </td>
+                <td>
+                    @if (item.Activo || User.IsInRole("Administrador"))
+                    {
+                        @Html.ActionLink("Editar", "Edit", new { id = item.Id });
 
+                    }|
+                    @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
+
+                    @if (item.Activo || User.IsInRole("Administrador"))
+                    {@Html.ActionLink("Eliminar", "Delete", new { id = item.Id });
                 }|
-                @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
-
-                @if (item.Activo || User.IsInRole("Administrador"))
-                {@Html.ActionLink("Eliminar", "Delete", new { id = item.Id });
-            }
-                
-            </td>
-        </tr>
+                    <a asp-action="ContratosInmuebles" asp-controller="Contrato" asp-route-id=@item.Id>Ver Contratos</a>
+                </td>
+            </tr>
         }
     </tbody>
 </table>

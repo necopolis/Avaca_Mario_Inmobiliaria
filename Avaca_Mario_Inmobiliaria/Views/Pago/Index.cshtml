@@ -2,13 +2,29 @@
 
 @{
     ViewData["Title"] = "Lista Pagos";
+
 }
 
 <h1>Lista de Pagos</h1>
 
-<p>
-    <a asp-action="Create">Crear Pago</a>
-</p>
+
+@{ if (@ViewBag.ContratoUnico)
+    {
+        <p>@("Del contrato del Inquilino"+Model.First().Contrato.Inquilino.Apellido) </p>
+
+
+        <p>
+            <a asp-action="Create" asp-route-id=@(Model.First().ContratoId)>Crear Pago</a>
+        </p>
+    }
+    else
+    {
+        <p>
+            <a asp-action="Create">Crear Pago</a>
+        </p>
+    }
+
+}
 <table class="table">
     <thead>
         <tr>

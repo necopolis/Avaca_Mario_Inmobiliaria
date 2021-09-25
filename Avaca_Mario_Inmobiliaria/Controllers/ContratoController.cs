@@ -1,4 +1,5 @@
 ﻿using Avaca_Mario_Inmobiliaria.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Avaca_Mario_Inmobiliaria.Controllers
 {
+    [Authorize]
     public class ContratoController : Controller
     {
         protected readonly IConfiguration configuration;
@@ -57,9 +59,26 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         // GET: ContratoController/Create
         public ActionResult Create()
         {
+
+            
             ViewBag.Inmuebles =dataInmueble.ObtenerTodosValidos();
             ViewBag.Garantes = dataGarante.ObtenerTodosActivos();
             ViewBag.Inquilinos = dataInquilino.ObtenerTodosActivos();
+            if (ViewBag.Inquilinos.Count == 0)
+            {
+                TempData["Error"] = "No hay Inquilinos habilitados para crear un contrato";
+                return RedirectToAction(nameof(Index));
+            }
+            if (ViewBag.Garantes.Count == 0)
+            {
+                TempData["Error"] = "No hay Garantes habilitados para crear un contrato";
+                return RedirectToAction(nameof(Index));
+            }
+            if (ViewBag.Inmuebles.Count == 0)
+            {
+                TempData["Error"] = "No hay nmuebles habilitados para crear un contrato";
+                return RedirectToAction(nameof(Index));
+            }
             return View();
         }
 
@@ -72,6 +91,8 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    //TODO Controlar que los id de Propietario/Inquilino/Garante exista
+
                     var fechasCorrectas = dataContrato.fechasCorrectas(contrato.InmuebleId, contrato.FechaInicio, contrato.FechaFin);
                     var inmuebleleIsOk = dataInmueble.InmubleHabilitado(contrato.InmuebleId);
                     var inquilinoIsOk = dataInquilino.ObtenerPorId(contrato.InquilinoId).Id > 0 ? true : false;
@@ -186,29 +207,70 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)
         {
+            bool admin = false;
+            var NotContrato = false;
             try
             {
-                var res = dataContrato.Baja(id);
-                if (res > 0)
+
+                if (User.IsInRole("Administrador"))
                 {
+                    NotContrato = dataContrato.ContratoVacio(id);
+                    admin = true;
+                }
+                if (NotContrato)
+                {
+                    TempData["Error"] = @"El contrato que quiere eliminar no esta vacio";
                     return RedirectToAction(nameof(Index));
                 }
-                else {
-                    ViewBag.Error = "Algo ha salido mal no se ha podido eliminar";
-                    return View();
+                var res = dataContrato.Baja(id, admin);
+                if (res > 0)
+                {
+                    TempData["Message"] = @"Contrato eliminado correctamente";
+                    return RedirectToAction(nameof(Index));
                 }
+
+                TempData["Error"] = @"No se ha podido eliminar el Contrato, intente nuevamente";
+                return RedirectToAction(nameof(Index));
+
+                /* aca las elimino y listo*/
+
             }
             catch (Exception ex)
             {
-                TempData["Error"] = @"No se ha podido Agregar el Inquilino, 
+                TempData["Error"] = @"No se ha podido Eliminar el Contrato, 
                                 se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
                 return RedirectToAction(nameof(Index));
                 //throw;
                 //return Json(new { Error = ex.Message });
             }
         }
+        // GET: Inmuebles/Contratos/{id}
+        public ActionResult ContratosInmuebles(int id)
+        {
+            string returnUrl = Request.Headers["referer"].FirstOrDefault();
+            //Deribar a contratos y mostrar todos los contratos de ese inmueble he inquilino
+            // Pasar el returnUrl
+            try
+            {
+                var res = dataInmueble.ContratoInmuebles(id);
+                if (res.Count > 0)
+                {
+                    ViewBag.ReturnUrl = returnUrl;
+                    ViewBag.Message = "Lista de Contratos asociados al inmuebele encontrados";
+                    return View("Index",res);
+                }
 
-        
+                TempData["Error"] = @"El inmuebele seleccionado no tiene contratos";
+                return RedirectToAction("Index", "Inmueble");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = @"ERROR al Mostrar Contratos asociado al Inmueble, realice el reclamo a servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+            }
 
+
+        }
     }
 }

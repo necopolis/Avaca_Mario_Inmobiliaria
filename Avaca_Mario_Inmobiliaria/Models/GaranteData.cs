@@ -50,7 +50,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                 string sql = @"UPDATE Garante 
                                SET 
                                 DNI = @DNI, Nombre=@Nombre, Apellido=@Apellido, Telefono=@Telefono, Email=@Email, 
-                                LugarTrabajo=@LugarTrabajo, Sueldo=@Sueldo
+                                LugarTrabajo=@LugarTrabajo, Sueldo=@Sueldo, Activo=@Activo
                                     WHERE
                                         Id = @Id";
 
@@ -63,6 +63,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Email", garante.Email);
                     comm.Parameters.AddWithValue("@LugarTrabajo", garante.LugarTrabajo);
                     comm.Parameters.AddWithValue("@Sueldo", garante.Sueldo);
+                    comm.Parameters.AddWithValue("@Activo", garante.Activo);
                     comm.Parameters.AddWithValue("@Id", id);
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteNonQuery());
@@ -105,16 +106,26 @@ namespace Avaca_Mario_Inmobiliaria.Models
             return i;
         }
 
-        public int Baja(int id)
+        public int Baja(int id, bool admin)
         {
             int res = -1;
+            string sql;
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"UPDATE Garante 
+                if (admin)
+                {
+                    sql = @"DELETE FROM Garante WHERE Id=@Id";
+                }
+                else
+                {
+                    sql = @"UPDATE Garante
                                SET 
-                                Activo=0
-                                WHERE
-                                Id = @Id";
+                                 Activo=0
+                              WHERE
+                                 Id = @Id";
+                }
+
 
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -122,6 +133,27 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     conn.Open();
                     res = Convert.ToInt32(comm.ExecuteNonQuery());
                     conn.Close();
+                }
+            }
+            return res;
+        }
+
+        internal bool TieneContrato(int id)
+        {
+            bool res = false;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT DISTINCT GaranteId FROM Contrato
+                                WHERE GaranteId=@Id";
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@Id", id);
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        res = true;
+                    }
                 }
             }
             return res;

@@ -20,7 +20,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
         [Display(Name = "Fecha de pago"), Required(ErrorMessage ="Campo solicitado")]
         public DateTime? FechaPago { get; set; }
 
-        [Display(Name ="Monto a Pagar"), Required(ErrorMessage = "Campo solicitado"), DataType(DataType.Currency)]
+        [Display(Name ="Monto a Pagar"), Required(ErrorMessage = "Campo solicitado")]
+        [Range(0.0, Double.MaxValue, ErrorMessage = "Debe ser mayor a 0")]
         public decimal Importe { get; set; }
         
         [Display(Name = "Contrato")]

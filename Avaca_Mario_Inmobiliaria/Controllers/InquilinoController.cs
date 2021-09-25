@@ -6,9 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using System.Data.SqlClient;
 
 namespace Avaca_Mario_Inmobiliaria.Controllers
 {
+    [Authorize]
     public class InquilinoController : Controller
     {
         protected readonly IConfiguration configuration;
@@ -74,11 +77,12 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (SqlException e)
             {
-                if (ex.HResult== -2146232060)
+
+                if (e.Number == 2627)
                 {
-                    TempData["Error"] = @"Esta queriendo agregar un documento duplicado";
+                    TempData["Error"] = "El numero de documento que quiere ingresar esta duplicado";
                     return RedirectToAction(nameof(Index));
                 }
                 TempData["Error"] = @"No se ha podido Agregar el Inquilino, 
@@ -125,8 +129,14 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (SqlException e)
             {
+
+                if (e.Number == 2627)
+                {
+                    TempData["Error"] = "El numero de documento que quiere ingresar esta duplicado";
+                    return RedirectToAction(nameof(Index));
+                }
                 TempData["Error"] = @"No se ha podido Agregar el Inquilino, 
                                 se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
                 return RedirectToAction(nameof(Index));
@@ -168,16 +178,16 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         public ActionResult Delete(int id, Inquilino inqui)
         {
             bool admin = false;
-            var NotContrato = false;
+            var TieneContrato = false;
             try
             {
                 
                 if (User.IsInRole("Administrador") )
                 {
-                    NotContrato = data.NoTieneContrato(id);
+                    TieneContrato = data.TieneContrato(id);
                     admin = true;
                 }
-                if(NotContrato)
+                if(TieneContrato)
                 {
                     TempData["Error"] = @"Inquilino que quiere eliminar tiene contratos";
                     return RedirectToAction(nameof(Index));
@@ -204,5 +214,6 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 //return Json(new { Error = ex.Message });
             }
         }
+
     }
 }

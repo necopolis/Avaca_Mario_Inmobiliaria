@@ -37,7 +37,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             //dataInquilino = new InquilinoData(configuration);
         }
         // GET: Usuarios
-        //[Authorize(Policy = "Administrador")]
+        [Authorize(Policy = "Administrador")]
         public ActionResult Index()
         {
             var usuarios = dataUsuario.ObtenerTodos();
@@ -53,8 +53,18 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         [Authorize(Policy = "Administrador")]
         public ActionResult Details(int id)
         {
-            var e = dataUsuario.ObtenerPorId(id);
-            return View(e);
+            try
+            {
+                var e = dataUsuario.ObtenerPorId(id);
+                return View(e);
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"]="ERROR comuniquese con servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+            }
+            
         }
 
         // GET: Usuarios/Create
@@ -108,8 +118,8 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             }
             catch (Exception ex)
             {
-                ViewBag.Roles = Usuario.ObtenerRoles();
-                return View();
+                TempData["Error"] = "ERROR comuniquese con servicio tecnico";
+                return RedirectToAction(nameof(Index));
             }
         }
 
@@ -136,8 +146,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             }
             catch (Exception e)
             {
-                TempData["Error"] = @"No se ha podido Ingresar a la vista del perfil, 
-                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
+                TempData["Error"] = "Error en Perfil, comuniquese con el servicio tecnico";
                 return RedirectToAction(nameof(Index));
                 //throw;
             }
@@ -145,19 +154,29 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         }
 
         // GET: Usuarios/Edit/5
-        //[Authorize(Policy = "Administrador")]
+        [Authorize(Policy = "Administrador")]
         public ActionResult Edit(int id)
         {
-            ViewData["Title"] = "Editar usuario";
-            var u = dataUsuario.ObtenerPorId(id);
-            ViewBag.Roles = Usuario.ObtenerRoles();
-            return View(u);
+            try
+            {
+                ViewData["Title"] = "Editar usuario";
+                var u = dataUsuario.ObtenerPorId(id);
+                ViewBag.Roles = Usuario.ObtenerRoles();
+                return View(u);
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "ERROR en Editar, comuniquese con el servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+            }
+           
         }
 
         // POST: Usuarios/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize]
+        [Authorize]
         public ActionResult Edit(int id, Usuario u)
         {
             var returnUrl = Request.Headers["referer"].FirstOrDefault();
@@ -237,8 +256,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 }
                 else
                 {
-                    TempData["Error"] = @"No se ha podido Editar el Usuario
-                                        Intentelo mas tarde o realice el reclamo a servicio tecnico";
+                    TempData["Error"] = @"ERROR en Editar Usuario, comuniquese con servicio tecnico";
                     return Redirect(returnUrl);
                 }
 
@@ -246,9 +264,9 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             }
             catch (Exception ex)
             {//colocar breakpoints en la siguiente línea por si algo falla
-                TempData["Error"]= @"No se ha podido Editar el Usuario, 
-                                se ha producido algun tipo de error, realice el reclamo a servicio tecnico";
-                return RedirectToAction("Index", "Home");
+                TempData["Error"]= @"ERROR en Editar Usuario, comuniquese con servicio tecnico";
+                //return RedirectToAction("Index", "Home");
+                return RedirectToAction(nameof(Index));
                 //throw;
             }
         }
@@ -454,7 +472,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         
 
         // GET: Usuario/EditPass/{id}
-        //[Authorize]
+        [Authorize]
         public ActionResult EditPass(int id) {
             try
             {

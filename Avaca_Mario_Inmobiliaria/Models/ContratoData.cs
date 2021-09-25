@@ -101,19 +101,32 @@ namespace Avaca_Mario_Inmobiliaria.Models
         }
 
 
-        public int Baja(int id)
+        public int Baja(int id, bool admin)
         {
             int res = -1;
+            string sql;
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"UPDATE Contrato SET
-                             Activo=0
-                             WHERE Id = @Id";
+                if (admin)
+                {
+                    sql = @"DELETE FROM Contrato WHERE Id=@Id";
+                }
+                else
+                {
+                    sql = @"UPDATE Contrato 
+                               SET 
+                                 Activo=0
+                              WHERE
+                                 Id = @Id";
+                }
+
+
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     comm.Parameters.AddWithValue("@Id", id);
                     conn.Open();
-                    res = comm.ExecuteNonQuery();
+                    res = Convert.ToInt32(comm.ExecuteNonQuery());
                     conn.Close();
                 }
             }
@@ -125,7 +138,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 string sql = @"UPDATE Contrato SET
-                    FechaInicio=@FechaInicio, FechaFin=@FechaFin, InquilinoId=@InquilinoId, GaranteId=@GaranteId, InmuebleId=@InmuebleId
+                    FechaInicio=@FechaInicio, FechaFin=@FechaFin, InquilinoId=@InquilinoId, GaranteId=@GaranteId, InmuebleId=@InmuebleId, Activo=@Activo
                     WHERE Id = @Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -134,6 +147,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@InquilinoId", contrato.InquilinoId);
                     comm.Parameters.AddWithValue("@GaranteId", contrato.GaranteId);
                     comm.Parameters.AddWithValue("@InmuebleId", contrato.InmuebleId);
+                    comm.Parameters.AddWithValue("@Activo", contrato.Activo);
                     comm.Parameters.AddWithValue("@Id", contrato.Id);
                     conn.Open();
                     res = comm.ExecuteNonQuery();
@@ -199,6 +213,27 @@ namespace Avaca_Mario_Inmobiliaria.Models
             return contrato;
         }
 
+        internal bool ContratoVigente(int id)
+        {
+            bool res = true;
+            string sql = @"SELECT c.Id FROM contrato c WHERE c.InmuebleId = @Id
+                        AND c.Activo = 1 AND getdate() BETWEEN c.FechaInicio AND c.FechaFin;
+";
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@Id", id);
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    res = (reader.HasRows) ? false : true;
+                    conn.Close();
+                }
+            }
+            return res;
+        }
+
         public IList<Contrato> AllByInquilino(int id)
         {
             IList<Contrato> lista = new List<Contrato>();
@@ -214,7 +249,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
                                 FROM Contrato c INNER JOIN Inmueble i ON c.InmuebleId = i.Id
                                 INNER JOIN Propietario p ON i.PropietarioId = p.Id
                                 INNER JOIN Garante g ON c.GaranteId = g.Id
-                                INNER JOIN Inquilino i2 ON c.InquilinoId = i2.Id WHERE i2.Id = @id ";
+                                INNER JOIN Inquilino i2 ON c.InquilinoId = i2.Id 
+                                WHERE i2.Id = @id ";
 
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -275,7 +311,11 @@ namespace Avaca_Mario_Inmobiliaria.Models
 
             return lista;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public Boolean Check(int id) {
             Boolean res= false;
             using (SqlConnection conn = new SqlConnection(connectionString)) 
@@ -428,6 +468,24 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return res;
         }
-
+        public bool ContratoVacio(int id)
+        {
+            bool res = true;
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT DISTINCT InquilinoId FROM Contrato
+                                WHERE InquilinoId=@Id";
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@Id", id);
+                    conn.Open();
+                    if (comm.ExecuteNonQuery() > 0)
+                    {
+                        res = true;
+                    }
+                }
+            }
+            return res;
+        }
     }
 }
