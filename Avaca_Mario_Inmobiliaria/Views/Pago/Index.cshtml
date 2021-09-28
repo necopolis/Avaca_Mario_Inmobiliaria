@@ -2,18 +2,45 @@
 
 @{
     ViewData["Title"] = "Lista Pagos";
+
 }
 
 <h1>Lista de Pagos</h1>
 
-<p>
-    <a asp-action="Create">Crear Pago</a>
-</p>
+@if (ViewBag.Vigente)
+{
+    {
+        if (@ViewBag.ContratoUnico)
+        {
+            <p>@("Del contrato del Inquilino"+Model.First().Contrato.Inquilino.Apellido) </p>
+
+
+            <p>
+                <a asp-action="Create" asp-route-id=@(Model.First().ContratoId)>Crear Pago</a>
+            </p>
+        }
+        else
+        {
+            <p>
+                <a class="btn btn-outline-dark" asp-action="Create">Crear Pago</a>
+            </p>
+        }
+
+    }
+}
+else
+{
+    <p>
+        <a class="btn btn-outline-dark" href="@ViewBag.returnUrl">Regresar</a>
+    </p>
+}
+
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.NumeroPago)
+                @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ContratoId)
@@ -40,13 +67,13 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.NumeroPago)
+                    @Html.DisplayFor(modelItem => item.Id)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Contrato.Id)
                 </td>
                 <td>
-                    @(item.Contrato.Inmueble.Tipo + " " + item.Contrato.Inmueble.Direccion)
+                    @(item.Contrato.Inmueble.Direccion)
                 </td>
                 <td>
                     @(item.Contrato.Inquilino.Nombre +" "+ item.Contrato.Inquilino.Apellido)
@@ -58,9 +85,9 @@
                     @Html.DisplayFor(modelItem => item.Importe)
                 </td>
                 <td>
-                    @Html.ActionLink("Editar", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Eliminar", "Delete", new { id = item.Id })
+                    <i class="fas fa-edit"></i> @Html.ActionLink("Editar", "Edit", new { id = item.Id }) |
+                <i class="fas fa-info-square"></i> @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
+                <i class="fas fa-trash-alt"></i> @Html.ActionLink("Eliminar", "Delete", new { id = item.Id })
                 </td>
             </tr>
         }

@@ -7,6 +7,19 @@ using System.Threading.Tasks;
 
 namespace Avaca_Mario_Inmobiliaria.Models
 {
+    public enum enUso
+    {
+        Comercial = 1,
+        Residencial = 2,
+    }
+    public enum enTipo
+    {
+        Local = 1,
+        Deposito = 2,
+        Casa = 3,
+        Departamento = 4,
+        Otros = 5,
+    }
     public class Inmueble
     {
         [Display(Name = "Código")]
@@ -14,18 +27,21 @@ namespace Avaca_Mario_Inmobiliaria.Models
         [Required]
         public string Direccion { get; set; }
 
-        [Display(Prompt = "Comercial o Residencial"), RegularExpression(@"^[a-zA-Z\s]{2,254}", ErrorMessage = "Solo letras o espacios")]
-        public string Uso { get; set; }
+        public int Uso { get; set; }
+        public string UsoNombre => Uso > 0 ? ((enUso)Uso).ToString() : "";
 
-        [Display(Prompt = "departamentos, locales, depósitos, oficinas individuales, etc.")]
-        public string Tipo { get; set; }
+        [Required(ErrorMessage ="Este campo es Obligatorio")]
+        public int Tipo { get; set; }
+
+        [Display(Name ="Tipo")]
+        public string TipoNombre => Tipo > 0 ? ((enTipo)Tipo).ToString() : "";
 
         [Display(Name = "Ambientes"), Required(ErrorMessage = "Este campo es Obligatorio.")]
         public int CantAmbiente { get; set; }
 
-        [Required(ErrorMessage = "Ingrese un numero con decimal")]
+        [Range(0.0, Double.MaxValue, ErrorMessage = "Debe ser mayor a 0")]
         public decimal Precio { get; set; }
-        
+
         public bool Activo { get; set; }
         
         [Display(Name = "Dueño")]
@@ -35,6 +51,28 @@ namespace Avaca_Mario_Inmobiliaria.Models
         [ForeignKey(nameof(PropietarioId))]
         public Propietario Duenio { get; set; }
 
+
+        public static IDictionary<int, string> ObtenerUsos()
+        {
+            SortedDictionary<int, string> usos = new SortedDictionary<int, string>();
+            Type tipoEnumRol = typeof(enUso);
+            foreach (var valor in Enum.GetValues(tipoEnumRol))
+            {
+                usos.Add((int)valor, Enum.GetName(tipoEnumRol, valor));
+            }
+            return usos;
+        }
+
+        public static IDictionary<int, string> ObtenerTipos()
+        {
+            SortedDictionary<int, string> tipos = new SortedDictionary<int, string>();
+            Type tipoEnumRol = typeof(enTipo);
+            foreach (var valor in Enum.GetValues(tipoEnumRol))
+            {
+                tipos.Add((int)valor, Enum.GetName(tipoEnumRol, valor));
+            }
+            return tipos;
+        }
 
 
     }

@@ -1,0 +1,27 @@
+﻿@model Avaca_Mario_Inmobiliaria.ModelsAux.InmuebleDates
+
+@{
+    ViewData["Title"] = "Disponibles";
+}
+
+<h1>Disponibles</h1>
+
+<h4>InmuebleDates</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+
+                <label asp-for="Desde" class="control-label"></label>
+                <input asp-for="Desde" class="form-control" />
+                
+                <label asp-for="Hasta" class="control-label"></label>
+                <input asp-for="Hasta" class="form-control" />
+
+    </div>
+    <button>Buscar</button>
+</div>
+
+<div>
+    <a asp-action="Index">Regresar a la Lista</a>
+</div>
+

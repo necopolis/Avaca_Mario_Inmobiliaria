@@ -23,6 +23,11 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             return View();
         }
 
+        public IActionResult Restringido() 
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

@@ -2,14 +2,32 @@
 
 @{
     ViewData["Title"] = "Lista Contrato";
+    string returnUrl = (string)ViewBag.ReturnUrl;
 }
 
 <h1>Lista de contratos</h1>
 
+@if (!String.IsNullOrEmpty(returnUrl))
+{
+    <h3>
+        @("Del Inmueble,  Direccion: "+Model.First().Inmueble.Direccion + "  - Dueño: "+ Model.First().Inmueble.Duenio.Apellido)
+    </h3>
+}
+
 <p>
-    <a asp-action="Create">Crear Contrato</a>
+    <a class="btn btn-outline-dark" asp-action="Create">Crear Contrato</a>
+    <a class="btn btn-outline-dark" asp-action="Vigentes">Contratos Vigentes</a>
+   
 </p>
-<table class="table">
+<br />
+@*@if (!string.IsNullOrEmpty(returnUrl))
+{
+    <p>
+        <a href=@returnUrl>Regresar</a>
+    </p>
+}*@
+
+<table class="table" id="tablaId">
     <thead>
         <tr>
             <th>
@@ -37,37 +55,45 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaInicio)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaFin)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Activo)
-            </td>
-            <td>
-                @(item.Inquilino.DNI+ " " + item.Inquilino.Apellido)
-            </td>
-            <td>
-                @(item.Garante.DNI+" "+ item.Garante.Apellido)
-            </td>
-            <td>
-                @(item.Inmueble.Direccion+" Precio: $"+ item.Inmueble.Precio)
-            </td>
-            <td>
-                @Html.ActionLink("Editar", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
-                @if (item.Activo)
-                {@Html.ActionLink("Eliminar", "Delete", new { id = item.Id });
-            }
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaInicio)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaFin)
+                </td>
+                <td>
+                    @(item.Activo? "Si" : "No")
+                </td>
+                <td>
+                    @(item.Inquilino.DNI+ " " + item.Inquilino.Apellido)
+                </td>
+                <td>
+                    @(item.Garante.DNI+" "+ item.Garante.Apellido)
+                </td>
+                <td>
+                    @(item.Inmueble.Direccion+" Precio: $"+ item.Inmueble.Precio)
+                </td>
+                <td>
+                    @Html.ActionLink("Editar", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
+                    @if (item.Activo && User.IsInRole("Administrador"))
+                    {@Html.ActionLink("Cancelar", "Delete", new { id = item.Id });
+                }|
+                    <a asp-action="PagosContratos" asp-controller="Pago" asp-route-id=@(item.Id)>Ver Pagos</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_Table");}
+
+}

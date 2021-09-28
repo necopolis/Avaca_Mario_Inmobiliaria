@@ -77,8 +77,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
             Inquilino i = null;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo FROM Inquilino 
-                                WHERE Id=@id";
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo, Activo FROM Inquilino 
+                                WHERE Id=@Id";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
                     comm.Parameters.AddWithValue("@Id", id);
@@ -94,7 +94,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             Apellido = (string)reader[nameof(Inquilino.Apellido)],
                             Telefono = (string)reader[nameof(Inquilino.Telefono)],
                             Email = (string)reader[nameof(Inquilino.Email)],
-                            LugarTrabajo = (string)reader[nameof(Inquilino.LugarTrabajo)]
+                            LugarTrabajo = (string)reader[nameof(Inquilino.LugarTrabajo)],
+                            Activo = (bool)reader[nameof(Inquilino.Activo)]
                         };
                     }
                     conn.Close();
@@ -107,7 +108,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             Inquilino i = null;
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo FROM Inquilino 
+                string sql = @"SELECT Id, DNI, Nombre, Apellido, Telefono, Email, LugarTrabajo, Activo FROM Inquilino 
                                 WHERE DNI=@dni";
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -124,7 +125,8 @@ namespace Avaca_Mario_Inmobiliaria.Models
                             Apellido = (string)reader[nameof(Inquilino.Apellido)],
                             Telefono = (string)reader[nameof(Inquilino.Telefono)],
                             Email = (string)reader[nameof(Inquilino.Email)],
-                            LugarTrabajo = (string)reader[nameof(Inquilino.LugarTrabajo)]
+                            LugarTrabajo = (string)reader[nameof(Inquilino.LugarTrabajo)],
+                            Activo = (bool)reader[nameof(Inquilino.Activo)]
                         };
                     }
                     conn.Close();
@@ -133,16 +135,47 @@ namespace Avaca_Mario_Inmobiliaria.Models
             return i;
         }
 
-        public int Baja(int id)
+        public bool TieneContrato(int id)
+        {
+            bool res = false;
+            using (SqlConnection conn=new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT DISTINCT c.InquilinoId FROM Contrato c
+                                WHERE c.InquilinoId=@Id";
+                using (SqlCommand comm= new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@Id", id);
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        res = true;
+                    }
+                }
+            }
+            return res;
+        }
+
+        public int Baja(int id, bool admin)
         {
             int res = -1;
+            string sql;
+            
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                string sql = @"UPDATE Inquilino 
+                if (admin)
+                {
+                    sql = @"DELETE FROM Inquilino WHERE Id=@Id";
+                }
+                else
+                {
+                    sql = @"UPDATE Inquilino 
                                SET 
                                  Activo=0
                               WHERE
                                  Id = @Id";
+                }
+                    
 
                 using (SqlCommand comm = new SqlCommand(sql, conn))
                 {
@@ -220,7 +253,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return res;
         }
-
+        
 
     }
 }

@@ -5,69 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Inmobiliaria Avaca</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.2/css/jquery.dataTables.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                @*<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Inmobiliaria Avaca</a>*@
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/img/InmobiliariaAvaca.svg" alt="Alternate Text" width="60" /></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 @if (!User.Identity.IsAuthenticated)
                 {
-                    <a class="py-2 align-bottom align-content-center" asp-controller="Home" asp-action="Index"><span class="lnr lnr-home"></span> Inicio</a>
-                    <a class="py-2 d-none d-md-inline-block float-right" href="@Url.Link("login", null)"><span class="lnr lnr-enter"></span> Acceder</a>
+                    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                        <div class="navbar-nav">
+                            <a class="nav-link active nav-link text-dark" aria-current="page" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link active nav-link text-dark" aria-current="page" href="@Url.Link("login", null)"><span class="lnr lnr-enter"></span> Login </a>
+                        </div>
+                    </div>
+
                 }
                 else
                 {
-
-                    <a class="btn btn-primary  text-light" asp-controller="Home" asp-action="Index">
-                        <i class="fas fa-home"></i> Inicio
+                    @if (User.IsInRole("Administrador") || User.IsInRole("SuperAdministrador"))
+                        {
+                    <a class="nav-link active nav-link text-dark" asp-controller="Usuario" asp-action="Index">Usuario <i class="fas fa-user"></i></a>
+                }
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link active nav-link text-dark" asp-area="" asp-controller="Inquilino" asp-action="Index">Inquilinos <i class="fas fa-house-user"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active nav-link text-dark" asp-area="" asp-controller="Propietario" asp-action="Index">Propietarios<i class="fas fa-user-tie"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link activenav-link text-dark" asp-area="" asp-controller="Inmueble" asp-action="Index">Inmuebles <i class="fas fa-building"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active nav-link text-dark" asp-area="" asp-controller="Garante" asp-action="Index">Garantes <i class="fas fa-user-check"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active nav-link text-dark" asp-area="" asp-controller="Contrato" asp-action="Index">Contratos <i class="fas fa-file-signature"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active nav-link text-dark" asp-area="" asp-controller="Pago" asp-action="Index">Pago <i class="fas fa-search-dollar"></i></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad <i class="fas fa-user-shield"></i></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="dropdown">
+                    <a class="btn btn-secondary dropdown-toggle text-light" href="#" role="button" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent" data-display="static">
+                        <span class="lnr lnr-user"></span> @User.Identity.Name
                     </a>
 
-                    @if (User.IsInRole("Administrador") || User.IsInRole("SuperAdministrador"))
-                    {
-                        <a class="btn btn-info mx-1 nav-link text-dark" asp-controller="Usuario" asp-action="Index">Usuario <i class="fas fa-house-user"></i></a>
-                    }
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="btn btn-info mx-1 nav-link text-dark" asp-area="" asp-controller="Inquilino" asp-action="Index">Inquilinos <i class="fas fa-house-user"></i></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-info mx-1 nav-link text-dark" asp-area="" asp-controller="Propietario" asp-action="Index">Propietarios<i class="fas fa-user-tie"></i></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-info mx-1 nav-link text-dark" asp-area="" asp-controller="Inmueble" asp-action="Index">Inmuebles <i class="fas fa-building"></i></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Garante" asp-action="Index">Garantes <i class="fas fa-user-check"></i></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Contrato" asp-action="Index">Contratos <i class="fas fa-file-signature"></i></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Pago" asp-action="Index">Pago <i class="fas fa-file-signature"></i></a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="btn btn-info mx-1 nav-link  nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad <i class="fas fa-user-shield"></i></a>
-                            </li>
-                        </ul>
+                    <div class="dropdown-menu btn-secondary" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item text-dark" asp-controller="Usuario" asp-action="Perfil"><i class="lnr lnr-user"></i> Perfil</a>
+                        <a class="dropdown-item text-dark" asp-controller="Usuario" asp-action="Logout"><i class="lnr lnr-exit"></i> Salir</a>
                     </div>
-                    <div class="dropdown">
-                        <a class="btn btn-primary dropdown-toggle text-light" href="#" role="button" id="userMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-reference="parent" data-display="static">
-                            <span class="lnr lnr-user"></span> @User.Identity.Name
-                        </a>
-
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <a class="dropdown-item text-dark" asp-controller="Usuario" asp-action="Perfil"><i class="lnr lnr-user"></i> Perfil</a>
-                            <a class="dropdown-item text-dark" asp-controller="Usuario" asp-action="Logout"><i class="lnr lnr-exit"></i> Salir</a>
-                        </div>
-                    </div>
+                </div>
                 }
 
             </div>
@@ -119,12 +123,20 @@
             function confirmacion() {
                 return confirm("Esta seguro de eliminar");
             }
+            
         </script>
     }
+    
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+    <script type="text/javascript" charset="utf8" src="~/js/jquery.dataTables.js"></script>
+
+
+    <script src="~/js/all.min.js" integrity="sha512-Tn2m0TIpgVyTzzvmxLNuqbSJH3JP8jm+Cy3hvHrW7ndTDcJ1w5mBiksqDBb8GpE2ksktFvDB/ykZ0mDpsZj20w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

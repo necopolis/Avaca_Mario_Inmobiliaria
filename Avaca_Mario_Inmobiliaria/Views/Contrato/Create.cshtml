@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Crear Contrato";
+    string hoy = DateTime.Now.ToString("yyyy-MM-dd");
 }
 
 <h1>Crear</h1>
@@ -14,40 +15,65 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FechaInicio" class="control-label"></label>
-                <input asp-for="FechaInicio" class="form-control" />
+                <input asp-for="FechaInicio" min=@hoy value=@hoy class="form-control" data-msg-required="Customer name required" data-msg-minlength="Customer name must have at least {0} characters" />
                 <span asp-validation-for="FechaInicio" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FechaFin" class="control-label"></label>
-                <input asp-for="FechaFin" class="form-control" />
+                <input  asp-for="FechaFin" min=@hoy class="form-control" />
                 <span asp-validation-for="FechaFin" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="InquilinoId" class="control-label"></label>
                 <select class="form-control" name="InquilinoId">
-                    @foreach (var inq in (IList<Inquilino>)ViewBag.Inquilinos)
-                    {
-                        <option value="@inq.Id"> @(inq.Nombre + " " + inq.Apellido)</option>
+                    @{ if (ViewBag.Inquilinos.Count > 0)
+                        {
+                            @foreach (var inq in (IList<Inquilino>)ViewBag.Inquilinos)
+                            {
+                                <option value="@inq.Id"> @(inq.Nombre + " " + inq.Apellido)</option>
+                            }
+                        }
+                        else
+                        {
+                            <option value="0">Sin inquilino en base de datos</option>
+                        }
                     }
+
                 </select>
             </div>
             <div class="form-group">
                 <label asp-for="GaranteId" class="control-label"></label>
                 <select class="form-control" name="GaranteId">
-                    @foreach (var g in (IList<Garante>)ViewBag.Garantes)
-                    {
-                        <option value="@g.Id"> @(g.Nombre + " " + g.Apellido)</option>
-                    }
+                    @{ if (ViewBag.Garantes.Count > 0)
+                        {
+                            @foreach (var g in (IList<Garante>)ViewBag.Garantes)
+                            {
+                                <option value="@g.Id"> @(g.Nombre + " " + g.Apellido)</option>
+                            }
+                        }
+                        else
+                        {
+                        <option value="0">Sin garantes en base de datos</option>
+                        }
+                     }
                 </select>
                 <span asp-validation-for="GaranteId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="InmuebleId" class="control-label"></label>
                 <select class="form-control" name="InmuebleId">
-                    @foreach (var inm in (IList<Inmueble>)ViewBag.Inmuebles)
-                    {
-                        <option value="@inm.Id"> @(inm.Direccion + " " + inm.Precio)</option>
-                    }
+                    @{ if (ViewBag.Inmuebles.Count > 0)
+                        {
+                            @foreach (var inm in (IList<Inmueble>)ViewBag.Inmuebles)
+                            {
+                                <option value="@inm.Id"> @(inm.Direccion + " " + inm.Precio)</option>
+                            }
+                        }
+                        else
+                        {
+                        <option value="0">Sin Inmuebles en base de datos</option>
+                            }
+                        }
                 </select>
                 <span asp-validation-for="InmuebleId" class="text-danger"></span>
             </div>

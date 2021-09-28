@@ -16,11 +16,12 @@ namespace Avaca_Mario_Inmobiliaria.Models
         public Guid NumeroPago { get; set; }
 
 
-        [DisplayFormat(DataFormatString = "{0:dd-MM-yyy}", ApplyFormatInEditMode = true)]
-        [Display(Name = "Fecha de pago"), Required(ErrorMessage ="Campo solicitado")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Fecha de Pago"), DataType(DataType.DateTime), Required(ErrorMessage = "Este campo es Obligatorio.")]
         public DateTime? FechaPago { get; set; }
 
-        [Display(Name ="Monto a Pagar"), Required(ErrorMessage = "Campo solicitado"), DataType(DataType.Currency)]
+        [Display(Name ="Monto a Pagar"), Required(ErrorMessage = "Campo solicitado")]
+        [Range(0.0, Double.MaxValue, ErrorMessage = "Debe ser mayor a 0")]
         public decimal Importe { get; set; }
         
         [Display(Name = "Contrato")]

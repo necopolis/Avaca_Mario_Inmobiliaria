@@ -5,7 +5,7 @@
 }
 
 <h1>Detalles</h1>
-
+<hr />
 <div>
     <h4>Usuario</h4>
     <hr />
@@ -31,10 +31,20 @@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Avatar)
         </dt>
-        <dt class = "col-sm-2">
-            <td>
-                <img width="100" src="@Model.Avatar" />
-            </td>
+        <dt class="col-sm-2">
+            @if (!String.IsNullOrEmpty(Model.Avatar))
+            {
+                <td class="align-items-center">
+                    <img src=@("/"+ Model.Avatar) class="avatar avatar-125 grav-hashed grav-hijack" />
+                </td>
+            }
+            else
+            {
+                <td>
+                    <img src="~/img/avatar.png" class="avatar avatar-125 grav-hashed grav-hijack" />
+                </td>
+            }
+
         </dt>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.RolNombre)
@@ -45,6 +55,6 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Editar", "Edit", new { /*id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Regresar a la Lista</a>
+    @Html.ActionLink("Editar", "Edit", new { id = Model.Id }) |
+    <a class="btn btn-outline-dark" asp-action="Index">Regresar a la Lista</a>
 </div>

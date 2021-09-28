@@ -1,5 +1,6 @@
 ﻿using Avaca_Mario_Inmobiliaria.Models;
 using InmobiliariaAlbornoz.ModelsAux;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Avaca_Mario_Inmobiliaria.Controllers
 {
+    [Authorize]
     public class PagoController : Controller
     {
         protected readonly IConfiguration configuration;
@@ -28,6 +30,13 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
             public ActionResult Index()
         {
             var pagos = dataPago.ObtenerTodos();
+            if (TempData.ContainsKey("Message") || TempData.ContainsKey("Error"))
+            {
+                ViewBag.Message = TempData["Message"];
+                ViewBag.Error = TempData["Error"];
+            }
+            ViewBag.ContratoUnico = false;
+            ViewBag.Vigente = true;
             return View(pagos);
         }
 
@@ -71,10 +80,10 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
 
                 return Ok(pc); // { "Inquilino": { "Nombre":"Pepito", ... }, "Contratos":[{"IdINmueble": 8}, {}, {}] }
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
 
-                throw e;
+                throw ex;
             }
 
         }
@@ -175,7 +184,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 }
                 
             }
-            catch
+            catch (Exception ex)
             {
                 TempData["Message"] = "Error grave comuniquese con el servicio tecnico";
                 return View();
@@ -208,10 +217,53 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 }
                 
             }
-            catch
+            catch (Exception ex)
             {
+                TempData["Error"] =@"Error en Eliminar un pago, llame a servicio tecnico";
                 return View();
             }
+        }
+        // GET: Contratos/pagos/idContrato
+        public ActionResult PagosContratos(int id)
+        {
+            bool vigente = false;
+            var returnUrl = Request.Headers["referer"].FirstOrDefault();
+            try
+            {
+                //Controlar que el contrato sea vigente
+                // SELECT c.Id FROM contrato c WHERE c.InmuebleId = @Id
+               // AND c.Activo = 1 AND getdate() BETWEEN c.FechaInicio AND c.FechaFin
+                vigente = dataContrato.ContratoVigente(id);
+                var res = dataPago.PagosContratos(id);
+                if (vigente)
+                {
+                    
+                    if (res.Count > 0)
+                    {
+                        ViewBag.Message = "Lista de Pagos del contrato encontrada";
+                        ViewBag.Vigente = true;
+                        ViewBag.ContratoUnico = true;
+                        return View(nameof(Index), res);
+                    }
+
+                    ViewBag.Message = "No hay pagos del contrato encontrada, puede realizar el primer pago";
+                    ViewBag.Contrato = dataContrato.ObtenerPorId(id);
+                    return View("Create");
+                }
+                //TempData["Error"] = "El contrato no es vigente no se puede realizar pagos";
+                ViewBag.Message= "El contrato no es vigente, solo se pueden ver los pagos";
+                ViewBag.Vigente =false;
+                ViewBag.returnUrl = returnUrl;
+                return View(nameof(Index), res);
+
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = "ERROR en Pagos de un Contrato, llame a servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+            }
+            
         }
     }
 }
