@@ -187,7 +187,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
 				sql = @"UPDATE Usuario SET Nombre=@Nombre, Apellido=@Apellido, Email=@Email
 						WHERE Id=@Id;";
 			}
-            else if (editoRol && editAvatar)
+            else if (editoRol && !editAvatar)
             {
 				sql = @"UPDATE Usuario SET Nombre=@Nombre, Apellido=@Apellido, Email=@Email, Rol=@Rol
 								WHERE Id=@Id;";
@@ -217,7 +217,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
 								comm.Parameters.AddWithValue("@Id", u.Id);
 								comm.Parameters.AddWithValue("@Nombre", u.Nombre);
 								comm.Parameters.AddWithValue("@Apellido", u.Apellido);
-								comm.Parameters.AddWithValue("@Nombre", u.Email);
+								comm.Parameters.AddWithValue("@Email", u.Email);
 							}
                             break;
 						case 1:
@@ -225,7 +225,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
 								comm.Parameters.AddWithValue("@Id", u.Id);
 								comm.Parameters.AddWithValue("@Nombre", u.Nombre);
 								comm.Parameters.AddWithValue("@Apellido", u.Apellido);
-								comm.Parameters.AddWithValue("@Nombre", u.Email);
+								comm.Parameters.AddWithValue("@Email", u.Email);
 								comm.Parameters.AddWithValue("@Rol", u.Rol);
 
 							}
@@ -235,7 +235,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
 								comm.Parameters.AddWithValue("@Id", u.Id);
 								comm.Parameters.AddWithValue("@Nombre", u.Nombre);
 								comm.Parameters.AddWithValue("@Apellido", u.Apellido);
-								comm.Parameters.AddWithValue("@Nombre", u.Email);
+								comm.Parameters.AddWithValue("@Email", u.Email);
 								comm.Parameters.AddWithValue("@Avatar", u.Avatar);
 							}
 							break;
@@ -244,7 +244,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
 								comm.Parameters.AddWithValue("@Id", u.Id);
 								comm.Parameters.AddWithValue("@Nombre", u.Nombre);
 								comm.Parameters.AddWithValue("@Apellido", u.Apellido);
-								comm.Parameters.AddWithValue("@Nombre", u.Email);
+								comm.Parameters.AddWithValue("@Email", u.Email);
 								comm.Parameters.AddWithValue("@Rol", u.Rol);
 								comm.Parameters.AddWithValue("@Avatar", u.Avatar);
 							}

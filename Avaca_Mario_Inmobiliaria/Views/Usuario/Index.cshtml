@@ -7,7 +7,7 @@
 <h1>Lista de Usuario</h1>
 <hr />
 <p>
-    <a asp-action="Create">Crear Usuario</a>
+    <a class="btn btn-outline-dark" asp-action="Create">Crear Usuario</a>
 </p>
 <table class="table display" id="tablaId" style="width:100%">
     <thead>
@@ -36,14 +36,14 @@
         <tr>
             @if (!String.IsNullOrEmpty(item.Avatar))
             {
-                <td>
-                    <img width="100" src="@item.Avatar" class="avatar avatar-125 grav-hashed grav-hijack" />
+                <td class="align-items-center">
+                    <img src=@("/"+item.Avatar) class="avatar avatar-125 grav-hashed grav-hijack" />
                 </td>
             }
             else
             {
                 <td>
-                    <img width="100" src="~/img/avatar.png" class="avatar avatar-125 grav-hashed grav-hijack" />
+                    <img src="~/img/avatar.png" class="avatar avatar-125 grav-hashed grav-hijack" />
                 </td>
             }
             <td>

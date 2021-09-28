@@ -263,6 +263,52 @@ namespace Avaca_Mario_Inmobiliaria.Models
             return res;
         }
 
+        internal object InmuebleSinContrato(string desde, string hasta)
+        {
+            IList<Inmueble> res = new List<Inmueble>();
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT i.Id, i.Direccion, i.Uso, i.Tipo, i.CantAmbiente, i.Precio, i.Activo, i.PropietarioId,
+                    p.Nombre, p.Apellido
+                    FROM Inmueble i INNER JOIN Contrato c ON i.Id = c.InmuebleId
+                    INNER JOIN Propietario p ON i.PropietarioId = p.Id
+                    WHERE i.Activo=1
+                    AND @desde BETWEEN c.FechaInicio AND c.FechaFin
+                    AND @hasta BETWEEN c.FechaInicio AND c.FechaFin";
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    comm.Parameters.AddWithValue("@desde", desde);
+                    comm.Parameters.AddWithValue("@hasta", hasta);
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Inmueble inmueble = new Inmueble
+                        {
+                            Id = reader.GetInt32(0),
+                            Direccion = reader.GetString(1),
+                            Uso = reader.GetInt32(2),
+                            Tipo = reader.GetInt32(3),
+                            CantAmbiente = reader.GetInt32(4),
+                            Precio = reader.GetDecimal(5),
+                            Activo = reader.GetBoolean(6),
+                            PropietarioId = reader.GetInt32(7),
+                            Duenio = new Propietario
+                            {
+                                Id = reader.GetInt32(7),
+                                Nombre = reader.GetString(8),
+                                Apellido = reader.GetString(9),
+                            }
+                        };
+                        res.Add(inmueble);
+                    }
+                    conn.Close();
+                }
+            }
+            return res;
+        }
+
         internal IList<Inmueble> ListaInmPropietario(int id)
         {
             IList<Inmueble> res = new List<Inmueble>();

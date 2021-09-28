@@ -15,7 +15,9 @@
 }
 
 <p>
-    <a asp-action="Create">Crear Contrato</a>
+    <a class="btn btn-outline-dark" asp-action="Create">Crear Contrato</a>
+    <a class="btn btn-outline-dark" asp-action="Vigentes">Contratos Vigentes</a>
+   
 </p>
 <br />
 @*@if (!string.IsNullOrEmpty(returnUrl))
@@ -82,13 +84,15 @@
                     @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
                     @if (item.Activo && User.IsInRole("Administrador"))
                     {@Html.ActionLink("Cancelar", "Delete", new { id = item.Id });
-                }
+                }|
                     <a asp-action="PagosContratos" asp-controller="Pago" asp-route-id=@(item.Id)>Ver Pagos</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_Table");}
 

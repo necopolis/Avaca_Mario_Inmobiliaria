@@ -12,14 +12,13 @@ namespace Avaca_Mario_Inmobiliaria.Models
         [Display(Name = "Código")]
         public int Id { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:dd-MM-yyy}", ApplyFormatInEditMode = true)]
-        [Display(Name = "Fecha Inicio"),
-        DataType(DataType.DateTime),
-        Required(ErrorMessage = "Este campo es Obligatorio.")]
+
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Fecha Inicio"), DataType(DataType.DateTime), Required(ErrorMessage = "Este campo es Obligatorio.")]
         public DateTime FechaInicio { get; set; }
 
-        [DisplayFormat(DataFormatString = "{0:dd-MM-yyy}", ApplyFormatInEditMode = true)]
-        [Display(Name = "Fecha Fin"), DataType(DataType.Date), Required(ErrorMessage = "Este campo es Obligatorio.")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Fecha Fin"), DataType(DataType.DateTime), Required(ErrorMessage = "Este campo es Obligatorio.")]
         public DateTime FechaFin { get; set; }
         
         [Required]

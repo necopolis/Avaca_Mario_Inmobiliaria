@@ -252,12 +252,12 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 if (res > 0)
                 {
                     TempData["Message"] = "Usuario Editado Correctamente";
-                    return Redirect(returnUrl);
+                    return RedirectToAction(nameof(Index));
                 }
                 else
                 {
                     TempData["Error"] = @"ERROR en Editar Usuario, comuniquese con servicio tecnico";
-                    return Redirect(returnUrl);
+                    return RedirectToAction(nameof(Index)); 
                 }
 
 
@@ -547,9 +547,9 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                     var res = dataUsuario.UpdatePass(id, PassNuevaHashed);
                     if (res > 0)
                     {
-                        ViewBag.Message= "Contraseña actualizada correctamente";
+                        TempData["Message"]= "Contraseña actualizada correctamente";
 
-                        return View();
+                        return RedirectToAction(nameof(Index));
                     }
                     else
                     {

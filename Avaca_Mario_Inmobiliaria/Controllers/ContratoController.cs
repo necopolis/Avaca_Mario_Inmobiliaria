@@ -53,15 +53,15 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 return RedirectToAction(nameof(Index));
                 //throw;
             }
-            
+
         }
 
         // GET: ContratoController/Create
         public ActionResult Create()
         {
 
-            
-            ViewBag.Inmuebles =dataInmueble.ObtenerTodosValidos();
+
+            ViewBag.Inmuebles = dataInmueble.ObtenerTodosValidos();
             ViewBag.Garantes = dataGarante.ObtenerTodosActivos();
             ViewBag.Inquilinos = dataInquilino.ObtenerTodosActivos();
             if (ViewBag.Inquilinos.Count == 0)
@@ -162,7 +162,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                     var fecha = dataContrato.fechasCorrectas(contrato.InmuebleId, contrato.FechaInicio, contrato.FechaFin, contrato.Id);
                     if (!fecha)
                     {
-                        ViewBag.Error =@"La fecha que a seleccionado se pisan con otros contrato, verifique nuevamente";
+                        ViewBag.Error = @"La fecha que a seleccionado se pisan con otros contrato, verifique nuevamente";
                         return View();
                     }
                     var res = dataContrato.Modificacion(contrato);
@@ -257,7 +257,7 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 {
                     ViewBag.ReturnUrl = returnUrl;
                     ViewBag.Message = "Lista de Contratos asociados al inmuebele encontrados";
-                    return View("Index",res);
+                    return View("Index", res);
                 }
 
                 TempData["Error"] = @"El inmuebele seleccionado no tiene contratos";
@@ -269,8 +269,36 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 return RedirectToAction(nameof(Index));
                 //throw;
             }
+        }
 
+        ////GET
+        //public ActionResult Vigentes()
+        //{
+        //    return View();
+        //}
 
+        //[HttpPost]
+        public ActionResult Vigentes() 
+        {
+            try
+            {
+                var res = dataContrato.ContratosVigentes();
+                if (res.Count > 0)
+                {
+                    ViewBag.Message ="Lista de contratos vigentes";
+                    return View(nameof(Index), res);
+                }
+                TempData["Error"] = "No hay contratos vigentes";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Error, comuniquese con servicio tecnico";
+                return RedirectToAction(nameof(Index));
+                //throw;
+            }
+            
+            
         }
     }
 }

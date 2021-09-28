@@ -215,7 +215,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
 
         internal bool ContratoVigente(int id)
         {
-            bool res = true;
+            bool res = false;
             string sql = @"SELECT c.Id FROM contrato c WHERE c.InmuebleId = @Id
                         AND c.Activo = 1 AND getdate() BETWEEN c.FechaInicio AND c.FechaFin;
 ";
@@ -227,7 +227,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
                     comm.Parameters.AddWithValue("@Id", id);
                     conn.Open();
                     var reader = comm.ExecuteReader();
-                    res = (reader.HasRows) ? false : true;
+                    res = (reader.HasRows) ? true : false;
                     conn.Close();
                 }
             }
@@ -311,6 +311,70 @@ namespace Avaca_Mario_Inmobiliaria.Models
 
             return lista;
         }
+
+        internal object InmuebleSinContrato(string desde, string hasta)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal IList<Contrato> ContratosVigentes()
+        {
+            IList<Contrato> res = new List<Contrato>();
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string sql = @"SELECT c.Id, c.FechaInicio, c.FechaFin, c.InmuebleId, c.InquilinoId, c.GaranteId,
+                                i.Id, i.DNI, i.Apellido,
+                                g.Id, g.DNI, g.Apellido,
+                                m.Id ,m.Direccion, m.Precio, m.Uso, c.Activo
+                                FROM Contrato c INNER JOIN Inquilino i ON c.InquilinoId = i.Id
+                                INNER JOIN Inmueble m ON c.InmuebleId = m.Id
+                                INNER JOIN Garante g ON c.GaranteId = g.Id
+                                WHERE c.Activo = 1 AND getdate() BETWEEN c.FechaInicio AND c.FechaFin";
+                using (SqlCommand comm = new SqlCommand(sql, conn))
+                {
+                    conn.Open();
+                    var reader = comm.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        Contrato contrato = new Contrato
+                        {
+                            Id = reader.GetInt32(0),
+                            FechaInicio = (DateTime)reader[nameof(Contrato.FechaInicio)],
+                            FechaFin = (DateTime)reader[nameof(Contrato.FechaFin)],
+                            InmuebleId = reader.GetInt32(3),
+                            InquilinoId = reader.GetInt32(4),
+                            GaranteId = reader.GetInt32(5),
+                            Activo = reader.GetBoolean(16),
+                            Inquilino = new Inquilino
+                            {
+                                Id = reader.GetInt32(6),
+                                DNI = reader.GetString(7),
+                                Apellido = reader.GetString(8),
+                            },
+                            Inmueble = new Inmueble
+                            {
+                                Id = reader.GetInt32(12),
+                                Direccion = reader.GetString(13),
+                                Precio = reader.GetDecimal(14),
+                                Uso = reader.GetInt32(15)
+                            },
+
+                            Garante = new Garante
+                            {
+                                Id = reader.GetInt32(9),
+                                DNI = reader.GetString(10),
+                                Apellido = reader.GetString(11),
+                            }
+                        };
+                        res.Add(contrato);
+                    }
+                    conn.Close();
+                }
+            }
+            return res;
+        }
+
         /// <summary>
         /// 
         /// </summary>

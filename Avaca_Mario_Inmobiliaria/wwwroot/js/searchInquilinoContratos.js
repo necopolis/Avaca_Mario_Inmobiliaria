@@ -85,3 +85,6 @@ async function searchInquilinoContratos() {
         p_aviso.innerText = "Escriba un DNI valido";
     }
 }
+
+//const desde = document.getElementById("desde");
+//const hasta = document.getElementById("hasta");

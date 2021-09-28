@@ -13,13 +13,17 @@
 <div class="row">
     <div class="col-sm-4 text-center">
         <div class="author-avatar">
-            @if (Model.Avatar != "")
+            @if (!String.IsNullOrEmpty(Model.Avatar))
             {
-                <img src="@Model.Avatar" class="avatar avatar-125 grav-hashed grav-hijack" />
+                <td class="align-items-center">
+                    <img src=@("/" + Model.Avatar)  class="avatar avatar-125 grav-hashed grav-hijack" />
+                </td>
             }
             else
             {
-                <img src="~/img/avatar.png" class="avatar avatar-125 grav-hashed grav-hijack"/>
+                <td>
+                    <img src="~/img/avatar.png" class="avatar avatar-125 grav-hashed grav-hijack" />
+                </td>
             }
         </div>
         <hr />
@@ -70,9 +74,9 @@
     </div>
 </div>
 <div>
-    <a asp-action="Index">Regresar a la Lista</a>
+    <a class="btn btn-outline-dark" asp-action="Index">Regresar a la Lista</a>
 </div>
-<a class="btn btn-info" asp-controller="Usuario" asp-action="EditPass" asp-route-id="@Model.Id">Cambiar contraseña</a>
+<a class="btn btn-outline-dark" asp-controller="Usuario" asp-action="EditPass" asp-route-id="@Model.Id">Cambiar contraseña</a>
 
 
 @section Scripts {

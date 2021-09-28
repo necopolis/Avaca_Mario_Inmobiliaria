@@ -7,7 +7,7 @@
 <h1>Lista Inquilino</h1>
 
 <p>
-    <a asp-action="Create">Crear Inquilino</a>
+    <a class="btn btn-outline-dark" asp-action="Create">Crear Inquilino</a>
 </p>
 <table class="table" id="tablaId">
     <thead>
@@ -57,13 +57,13 @@
                 </td>
                 <td>
                     @if (item.Activo || User.IsInRole("Administrador")) {
-                        @Html.ActionLink("Editar", "Edit", new { id = item.Id });
+                   @*<i class="fas fa-edit"></i>*@ @Html.ActionLink("Editar", "Edit", new { id = item.Id });
                         
                      }|
-                    @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
+                @*<i class="fas fa-info-square"></i>*@ @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
 
                     @if (item.Activo || User.IsInRole("Administrador"))
-                    {@Html.ActionLink("Eliminar", "Delete", new { id = item.Id });
+                    { @*<i class="fas fa-trash-alt"></i>*@ @Html.ActionLink("Eliminar", "Delete", new { id = item.Id });
                     }
 
 

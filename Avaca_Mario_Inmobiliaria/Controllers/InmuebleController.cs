@@ -16,11 +16,13 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
         protected readonly IConfiguration configuration;
         InmuebleData dataInm;
         PropietarioData dataProp;
+        ContratoData dataContrato;
         public InmuebleController(IConfiguration configuration)
         {
             this.configuration = configuration;
             dataInm = new InmuebleData(configuration);
             dataProp = new PropietarioData(configuration);
+            dataContrato = new ContratoData(configuration);
         }
         // GET: InmuebleController
         public ActionResult Index()
@@ -269,6 +271,14 @@ namespace Avaca_Mario_Inmobiliaria.Controllers
                 return View();
                 //throw;
             }
+        }
+
+        [HttpPost]
+        public ActionResult SinContrato(BusquedaInmueble inmueble)
+        {
+            var res = dataInm.InmuebleSinContrato(inmueble.Desde, inmueble.Hasta);
+             TempData["Message"]="Algo paso";
+            return View(res);
         }
     }
 }

@@ -3,29 +3,61 @@
 @{
     ViewData["Title"] = "Lista Inmuebles";
     string returnUrl = (string)ViewBag.returnUrl;
+    string hoy = DateTime.Now.ToString("yyyy-MM-dd");
 }
+<script type="text/javascript">
+    function buscar() {
+            var desde = $('#desde')[0].value;
+            var hasta = $('#hasta')[0].value;
+            $("#myModal").modal("hide");
+            return $.ajax({//documentación: https://api.jquery.com/jquery.ajax/
+                url: `@Url.Action("SinContrato", "Inmueble")`,
+                method: "POST",
+                data: {
+                    id: 0,
+                    desde: desde,
+                    hasta: hasta
+                },
+                dataType: "json"
 
+            }).done(res => {
+                 $.each(res, function (i, item) {
+                    for (var val in item) {
+                        $('#tableId').append($('<option>', {
+                            value: item[val].id,
+                            text: item[val].direccion
+                        }));
+                    }
+                });
+                $('#myModal').css("display", "block");
+            }).fail(res => {
+                console.log("Error: ", res);
+            });
+
+    }
+</script>
 <h1>Lista de Inmuebles</h1>
 
-@if (!String.IsNullOrEmpty(returnUrl))
+@*@if (!String.IsNullOrEmpty(returnUrl))
 {
     <h3>
         @(Model.First<Inmueble>().Duenio.Nombre + " "+Model.First<Inmueble>().Duenio.Apellido )
     </h3>
-}
+}*@
 
 <div class="row">
     <div>
         <p>
-            <a asp-action="Create">Crear Inmueble</a>
-            <a asp-action="Disponibles">Consultar por fechas</a>
-            <a asp-action="Activos">Inmuebles Activos</a>
+            <a class="btn btn-outline-dark" asp-action="Create">Crear Inmueble</a>
+            <a class="btn btn-outline-dark" asp-action="Activos">Inmuebles Activos</a>
+            <a class="btn btn-outline-dark" data-toggle="modal" data-target="#myModal" >Inmuebles sin contrato</a>
+
         </p>
     </div>
     @*@if (!String.IsNullOrEmpty(returnUrl))
     {
         <div class="col-9">
-            <a href=@returnUrl>Regresar</a>
+            <a class="btn btn-outline-dark" href=@returnUrl> Regresar</a>
         </div>
     }*@
 
@@ -33,11 +65,9 @@
 <table class="table" id="tablaId">
     <thead>
         <tr>
-            @if(!ViewBag.Bandera){
             <th>
                 @Html.DisplayNameFor(model => model.PropietarioId)
             </th>
-            }
             <th>
                 @Html.DisplayNameFor(model => model.Direccion)
             </th>
@@ -64,11 +94,9 @@
         @foreach (var item in Model)
         {
             <tr>
-                @if(!ViewBag.Bandera){
                 <td>
                     @(item.Duenio.Nombre + " " + item.Duenio.Apellido)
                 </td>
-                }
                 <td>
                     @Html.DisplayFor(modelItem => item.Direccion)
                 </td>
@@ -105,6 +133,38 @@
         }
     </tbody>
 </table>
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModalLabel">Inmuebles Sin Contratos Por fecha</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @*<form asp-action="Index" asp-controller="Inmueble">*@
+                    <div class="form-group">
+                        <label for="Desde" class="control-label">Fecha Ingreso</label>
+                        <input type="date" name="Desde" min=@hoy class="form-control" id="desde"/>
+                        <span for="Desde" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="Hasta" class="control-label">Fecha Salida</label>
+                        <input type="date" name="Hasta" min=@hoy class="form-control" id="hasta"/>
+                        <span for="Hasta" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <a class="btn btn-outline-dark" onclick="buscar()">Buscar</a>
+                        @*<input type="submit" value="Buscar" class="btn btn-primary" />*@
+                    </div>
+                @*</form>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_Table");}
 

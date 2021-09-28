@@ -34,14 +34,14 @@
         <dt class="col-sm-2">
             @if (!String.IsNullOrEmpty(Model.Avatar))
             {
-                <td>
-                    <img width="100" src="@Model.Avatar" />
+                <td class="align-items-center">
+                    <img src=@("/"+ Model.Avatar) class="avatar avatar-125 grav-hashed grav-hijack" />
                 </td>
             }
             else
             {
                 <td>
-                    <img width="100" src="~/img/avatar.png" />
+                    <img src="~/img/avatar.png" class="avatar avatar-125 grav-hashed grav-hijack" />
                 </td>
             }
 
@@ -56,5 +56,5 @@
 </div>
 <div>
     @Html.ActionLink("Editar", "Edit", new { id = Model.Id }) |
-    <a asp-action="Index">Regresar a la Lista</a>
+    <a class="btn btn-outline-dark" asp-action="Index">Regresar a la Lista</a>
 </div>
