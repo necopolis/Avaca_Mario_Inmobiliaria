@@ -85,9 +85,9 @@ else
                     @Html.DisplayFor(modelItem => item.Importe)
                 </td>
                 <td>
-                    <i class="fas fa-edit"></i> @Html.ActionLink("Editar", "Edit", new { id = item.Id }) |
-                <i class="fas fa-info-square"></i> @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
-                <i class="fas fa-trash-alt"></i> @Html.ActionLink("Eliminar", "Delete", new { id = item.Id })
+                    @*<i class="fas fa-edit"></i>*@ @Html.ActionLink("Editar", "Edit", new { id = item.Id }) |
+                @*<i class="fas fa-info-square"></i>*@ @Html.ActionLink("Detalles", "Details", new { id = item.Id }) |
+                @*<i class="fas fa-trash-alt"></i>*@ @Html.ActionLink("Eliminar", "Delete", new { id = item.Id })
                 </td>
             </tr>
         }

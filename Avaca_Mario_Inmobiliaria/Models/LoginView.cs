@@ -11,6 +11,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
     {
         [DataType(DataType.EmailAddress)]
         public string Usuario { get; set; }
+        
         [DataType(DataType.Password)]
         public string Clave { get; set; }
     }

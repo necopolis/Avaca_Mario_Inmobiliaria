@@ -37,7 +37,7 @@
             @if (!String.IsNullOrEmpty(item.Avatar))
             {
                 <td class="align-items-center">
-                    <img src=@("/"+item.Avatar) class="avatar avatar-125 grav-hashed grav-hijack" />
+                    <img src=@(item.Avatar) class="avatar avatar-125 grav-hashed grav-hijack" />
                 </td>
             }
             else

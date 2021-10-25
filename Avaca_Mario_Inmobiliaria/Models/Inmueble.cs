@@ -73,6 +73,7 @@ namespace Avaca_Mario_Inmobiliaria.Models
             }
             return tipos;
         }
+        public string Imagen { get; set; }
 
 
     }
