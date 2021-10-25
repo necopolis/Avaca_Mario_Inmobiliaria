@@ -21,8 +21,8 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                @if (!User.Identity.IsAuthenticated)
-                {
+                @*@if (!User.Identity.IsAuthenticated)
+                {*@
                     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                         <div class="navbar-nav">
                             <a class="nav-link active nav-link text-dark" aria-current="page" asp-controller="Home" asp-action="Index">Home</a>
@@ -30,9 +30,9 @@
                         </div>
                     </div>
 
-                }
+                @*}
                 else
-                {
+                {*@
                     @if (User.IsInRole("Administrador") || User.IsInRole("SuperAdministrador"))
                         {
                     <a class="nav-link active nav-link text-dark" asp-controller="Usuario" asp-action="Index">Usuario <i class="fas fa-user"></i></a>
